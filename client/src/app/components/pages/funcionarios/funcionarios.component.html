@@ -1,0 +1,115 @@
+<div class="container-fluid">
+    <div class=" drop">
+        <div class="drop-add">
+            <mat-toolbar>
+                <button class="load"><span (click)="load()">FUNCIONARIOS</span></button>
+            </mat-toolbar>
+        </div>
+        <div class="drop-filter">
+            <mat-form-field class="form-filter">
+                <mat-label>Buscar Nombre/Apellidos/Carnet Identidad/Cargo/Dependencia/Contrato</mat-label>
+                <input matInput (keyup)="applyFilter($event)"
+                    placeholder="Nombre/Ap. Paterno/Ap. Materno/Carnet Identidad/Cargo/Dependencia/Contrato" #input>
+                <button mat-icon-button matSuffix *ngIf="input.value !== ''" (click)="clearInput(input)">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div>
+        <div class="form-table">
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre? element.nombre: ""}} {{element.paterno?
+                        element.paterno: ""}} {{element.materno? element.materno: ""}} {{element.casada? element.casada:
+                        ""}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ci">
+                    <th mat-header-cell *matHeaderCellDef> C.I. </th>
+                    <td mat-cell *matCellDef="let element"> {{element.ci || "Sin C.I."}} {{ element.ci && element.ext?
+                        "- " + element.ext: ""}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="cargo">
+                    <th mat-header-cell *matHeaderCellDef> Cargo </th>
+                    <td mat-cell *matCellDef="let element"
+                        [ngStyle]="{'color': element.cargo !== 'SIN ASIGNACION' ? '' : 'rgb(253, 181, 181)'}">
+                        <!-- {{ element.registros &&
+                        element.registros.length > 0 &&
+                        element.registros[0].id_cargo ?
+                        element.registros[0].id_cargo.nombre : 'Sin cargo.' }} -->
+                        {{element.cargo}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="contrato">
+                    <th mat-header-cell *matHeaderCellDef> Contrato </th>
+                    <td mat-cell *matCellDef="let element"
+                        [ngStyle]="{'color': getColors(element.registros && element.registros.length > 0 && element.registros[0].id_cargo ? element.registros[0].id_cargo.contrato : '')}">
+                        {{ element.registros && element.registros.length > 0 && element.registros[0].id_cargo ?
+                        element.registros[0].id_cargo.contrato : 'Sin cargo.' }}
+                    </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="dependencia">
+                    <th mat-header-cell *matHeaderCellDef> Dependencia </th>
+                    <td mat-cell *matCellDef="let element">{{element.sigla}}
+                </ng-container>
+
+                <ng-container matColumnDef="estado">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell *matCellDef="let element">
+                        <!-- Prioridad a Rotando si existe una rotación activa -->
+                        <ng-container
+                            *ngIf="element.rotaciones && element.rotaciones.length > 0 && element.rotaciones[0].estado === true; else estadoGeneral">
+                            <div class="container-estado rotacion">
+                                <span class="estado">ROTANDO</span>
+                            </div>
+                        </ng-container>
+
+                        <!-- Estado general (Activo o Inactivo) -->
+                        <ng-template #estadoGeneral>
+                            <span *ngIf="element?.estado === true">
+                                <div class="container-estado activo">
+                                    <span class="estado">ACTIVO</span>
+                                </div>
+                            </span>
+                            <span *ngIf="element?.estado === false">
+                                <div class="container-estado inactivo">
+                                    <span class="estado">INACTIVO</span>
+                                </div>
+                            </span>
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="options">
+                    <th mat-header-cell *matHeaderCellDef> </th>
+                    <td mat-cell *matCellDef="let element" class="form-options">
+                        <div>
+                            <button mat-menu-item (click)="view(element)">
+                                <mat-icon style="color: rgb(230, 201, 39);">visibility_on</mat-icon>
+                                <span style="color: rgb(255, 224, 51);">Detalle</span>
+                            </button>
+                        </div>
+
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro. </td>
+                </tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[8, 10, 15, 20, 50]" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+
+    </div>

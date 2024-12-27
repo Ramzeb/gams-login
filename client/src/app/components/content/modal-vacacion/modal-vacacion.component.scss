@@ -1,0 +1,19 @@
+.modal-container {
+  text-align: center;
+  padding: 10px;
+}
+
+.options button,
+.turno-options button {
+  margin: 8px;
+}
+
+.selected {
+  border: 2px solid #000;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}

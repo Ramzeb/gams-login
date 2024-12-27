@@ -1,0 +1,90 @@
+.load {
+  color: #2a2a2a;
+}
+.drop {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  margin-top: 0.4%;
+  justify-content: space-between;
+}
+
+.drop div {
+  padding-left: 5px;
+}
+
+.drop-filter {
+  width: 90%;
+}
+
+.drop-add {
+  margin-right: 5px;
+}
+
+.drop-add mat-toolbar {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1%;
+  height: 80%;
+  font-size: 15px;
+}
+.drop-add mat-toolbar span {
+  padding-top: 2%;
+}
+
+.form-filter {
+  width: 100%;
+}
+
+.form-table {
+  margin-top: -1.2%;
+}
+
+.form-options {
+  padding: 0;
+  margin: 0;
+}
+.menu-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.container-estado {
+  border: 1px solid #ccc; /* Border for the square */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow for a 3D effect */
+  width: 70px; /* Fixed width */
+  padding: 3px; /* Padding around text */
+  display: flex; /* Flexbox to center content */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.estado {
+  color: rgb(255, 255, 255); /* Text color */
+  font-size: 11px;
+  letter-spacing: 1px;
+  font-weight: bold; /* Bold text */
+  text-align: center; /* Center the text */
+}
+
+.activo {
+  background-color: #359700; /* Background color for the square */
+}
+
+.inactivo {
+  background-color: #be2525; /* Background color for the square */
+}
+
+.inactivos {
+  background-color: #ff5c5c; /* Background color for the square */
+}
+
+@media only screen and (min-width: 2000px) {
+  .form-table {
+    margin-top: -0.5%;
+  }
+}
