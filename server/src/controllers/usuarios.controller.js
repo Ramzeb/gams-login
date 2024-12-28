@@ -43,6 +43,7 @@ async function createElemento(req, res) {
         return res.status(200).json({
           success: true,
           token,
+          funcionario: user._id,
           role: "user",
           name: user.nombre,
           status: true,
@@ -74,6 +75,7 @@ async function createElemento(req, res) {
         res.json({
           success: true,
           token,
+          funcionario: user._id,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
           name: user.nombre,
           status: user.estado,
