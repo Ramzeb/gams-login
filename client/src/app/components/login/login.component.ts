@@ -40,7 +40,12 @@ export class LoginComponent {
         role: this.role,
       })
       .subscribe(
-        () => {
+        (response: any) => {
+          if (!response.success) {
+            // Si la respuesta indica fallo, muestra el mensaje de error
+            this.errorMessage = response.message;
+            return;
+          }
           this.authService.getUserRole().subscribe((userRole: any) => {
             //console.log(userRole);
             if (this.rememberMe) {
@@ -59,9 +64,8 @@ export class LoginComponent {
           });
         },
         (error: any) => {
-          if (error.error.message) {
-            this.errorMessage = error.error.message;
-          }
+          // Manejo de errores de red u otros problemas
+          this.errorMessage = 'Error al conectar con el servidor.';
         }
       );
   }
