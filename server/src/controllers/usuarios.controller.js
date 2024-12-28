@@ -2,7 +2,6 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
-const { registrarLogin } = require("../config/child_process");
 const User = require("../models/funcionarios.model");
 
 const secretKey = process.env.JWT_SECRET;
@@ -76,9 +75,6 @@ async function createElemento(req, res) {
     }
     res.status(401).json({ message: message });
   }
-
-  // Registrar el intento de login
-  registrarLogin(username, estado);
 }
 async function updateElemento(req, res) {}
 

@@ -1,10 +1,10 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "sistema de gestion administrativo de RRHH",
-  "main": "organigram.js",
+  "description": "sistema de gestion accesos de RRHH",
+  "main": "login.js",
   "scripts": {
-    "start": "nodemon organigram.js"
+    "start": "nodemon login.js"
   },
   "author": "Ramzeb",
   "license": "ISC",
@@ -18,8 +18,7 @@
     "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.2",
-    "socket.io": "^4.8.1"
+    "mongoose": "^8.9.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

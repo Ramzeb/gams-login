@@ -5,11 +5,9 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const path = require("path");
 const database = require("./src/database/config");
-const { initSocket } = require("./src/config/socket");
 
 const app = express();
 const server = http.createServer(app);
-initSocket(server);
 const routes = require("./src/routes/router");
 
 // Permite solicitudes de 'localhost:4200' (donde está corriendo Angular)
