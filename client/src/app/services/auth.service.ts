@@ -6,7 +6,7 @@ import { tap, switchMap } from 'rxjs/operators';
 
 import { server } from '../../environments/environment.staging';
 
-const base_url = server.base_url + '/usuario';
+const base_url = server.base_url + '/login';
 
 @Injectable({
   providedIn: 'root',

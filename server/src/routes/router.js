@@ -49,7 +49,7 @@ rutas(
 );
 
 // Rutas para Usuarios
-rutas(router, "usuario", validarUsuario, validarActualizacionUsuario);
+rutas(router, "login", validarUsuario, validarActualizacionUsuario);
 
 // Rutas para Cargos
 rutas(router, "cargo", validarCargo, validarActualizacionCargo);

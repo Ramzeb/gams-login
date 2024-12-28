@@ -16,7 +16,7 @@ async function getElementoFiltrado(req, res) {}
 
 async function createElemento(req, res) {
   const { username, password, role } = req.body;
-  //console.log(role);
+  //console.log(req.body);
   try {
     // Supongamos que el username tiene el formato "ci-ext"
     const [ci, ext] = username.split("-");
@@ -53,6 +53,7 @@ async function createElemento(req, res) {
           .json({ success: false, message: "Contraseña incorrecta" });
       }
     }
+
     if (
       user.estado === true &&
       user.role &&
@@ -68,13 +69,14 @@ async function createElemento(req, res) {
         secretKey
         //{ expiresIn: "1h" } // El token expirará en 1 hora
       );
+
       if (token) {
         res.json({
           success: true,
           token,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
           name: user.nombre,
-          status: user.status,
+          status: user.estado,
         });
       } else {
         return res

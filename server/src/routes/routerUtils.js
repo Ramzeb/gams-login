@@ -6,7 +6,7 @@ const controladores = {
   funcionario: require("../controllers/funcionarios.controller"),
   partida: require("../controllers/partidas.controller"),
   unidad: require("../controllers/unidades.controller"),
-  usuario: require("../controllers/usuarios.controller"),
+  login: require("../controllers/usuarios.controller"),
   cargo: require("../controllers/cargos.controller"),
   registro: require("../controllers/registros.controller"),
 };
