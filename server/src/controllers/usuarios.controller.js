@@ -90,8 +90,6 @@ async function createElemento(req, res) {
         .status(200)
         .json({ success: false, message: "Usuario no autorizado" });
     }
-
-    // Devolver el token y datos al frontend
   } catch (error) {
     return res.status(200).json({
       success: false,
@@ -100,7 +98,37 @@ async function createElemento(req, res) {
   }
 }
 
-async function updateElemento(req, res) {}
+async function updateElemento(req, res) {
+  const { id, currentPassword, newPassword } = req.body;
+  //console.log(req.body);
+  try {
+    const user = await User.findOne({ _id: id });
+    //console.log(user);
+
+    // Llamada al servicio de autenticación externo
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!passwordMatch) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Contraseña actual incorrecta" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Contraseña actualizada con éxito!",
+    });
+  } catch (error) {
+    return res.status(200).json({
+      success: false,
+      message: "Usuario no encontrado",
+    });
+  }
+}
 
 async function deleteElemento(req, res) {}
 

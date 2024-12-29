@@ -34,11 +34,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 
-import { CardCalendarComponent } from './components/content/card-calendar/card-calendar.component';
-import { ModalVacacionComponent } from './components/content/modal-vacacion/modal-vacacion.component';
-import { PdfVacacionComponent } from './components/content/pdf-vacacion/pdf-vacacion.component';
-import { ModalReemplazoComponent } from './components/content/modal-reemplazo/modal-reemplazo.component';
 import { FuncionariosComponent } from './components/pages/funcionarios/funcionarios.component';
+import { MessageDialogComponent } from '../shared/components/message-dialog/message-dialog.component';
 
 // Define los formatos de fecha
 export const MY_DATE_FORMATS = {
@@ -58,11 +55,8 @@ export const MY_DATE_FORMATS = {
     AppComponent,
     LoginComponent,
     HomeComponent,
-    CardCalendarComponent,
-    ModalVacacionComponent,
-    PdfVacacionComponent,
-    ModalReemplazoComponent,
     FuncionariosComponent,
+    MessageDialogComponent,
   ],
   imports: [
     BrowserModule,

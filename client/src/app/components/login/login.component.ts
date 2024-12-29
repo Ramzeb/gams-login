@@ -2,6 +2,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MessageDialogComponent } from '../../../shared/components/message-dialog/message-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,11 @@ export class LoginComponent {
   errorMessage: string = '';
   rememberMe: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private router: Router
+  ) {}
   hidePassword = true;
 
   ngOnInit(): void {
@@ -55,6 +61,12 @@ export class LoginComponent {
               // Si no está marcado, elimina el nombre de usuario guardado
               localStorage.removeItem('rememberedUsername');
             }
+            let [ci, ext] = this.username.split('-');
+            // Verificar si la contraseña es igual al nombre de usuario
+            if (ci === this.password) {
+              this.openModifyMessage();
+              return;
+            }
             if (userRole === 'user') {
               this.router.navigate(['/funcionarios']);
             } else {
@@ -68,6 +80,18 @@ export class LoginComponent {
           this.errorMessage = 'Error al conectar con el servidor.';
         }
       );
+  }
+
+  openModifyMessage() {
+    this.password = '';
+    const dialogRef = this.dialog.open(MessageDialogComponent, {
+      width: '450px',
+      data: {
+        message:
+          'Acceso Denegado!. Debe cambiar su contraseña ingresando al sistema MiMunicipio!',
+      },
+    });
+    this.authService.logout();
   }
 
   togglePasswordVisibility() {

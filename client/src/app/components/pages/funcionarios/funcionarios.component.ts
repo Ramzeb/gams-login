@@ -8,9 +8,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-
-import { switchMap, map, catchError } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 import { AuthService } from '../../../services/auth.service';
 
@@ -19,12 +17,7 @@ import { RegistrosService } from '../../../services/registros.service';
 import { DependenciasService } from '../../../services/dependencias.service';
 import { CargosService } from '../../../services/cargos.service';
 
-import {
-  limpiarObject,
-  ordenPalabras,
-  getColor,
-  adjustPageSize,
-} from '../../../utils/utils';
+import { getColor, adjustPageSize } from '../../../utils/utils';
 
 @Component({
   selector: 'app-funcionarios',
@@ -86,57 +79,6 @@ export class FuncionariosComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  //   loadFuncionariosAndRegistros() {
-  //     forkJoin({
-  //       funcionarios: this.funcionariosService
-  //         .getFuncionarios()
-  //         .pipe(map((data) => data || [])),
-  //       registros: this.registrosService
-  //         .getRegistros()
-  //         .pipe(map((data) => data || [])),
-  //       rotaciones: this.rotacionService
-  //         .getFiltroCampos("estado", "true")
-  //         .pipe(map((data) => data || [])),
-  //       dependencias: this.dependenciasService
-  //         .getDependencias()
-  //         .pipe(map((data) => data || [])),
-  //       niveles: this.nivelesService.getNiveles().pipe(map((data) => data || [])),
-  //       solicitudes: this.solicitudService
-  //         .getFiltroCampos("estado", "PENDIENTE")
-  //         .pipe(map((data) => data || [])),
-  //     })
-  //       .pipe(
-  //         map(
-  //           ({
-  //             funcionarios,
-  //             registros,
-  //             rotaciones,
-  //             dependencias,
-  //             niveles,
-  //             solicitudes,
-  //           }) => {
-  //             return this.combineData(
-  //               funcionarios,
-  //               registros,
-  //               rotaciones,
-  //               dependencias,
-  //               niveles,
-  //               solicitudes
-  //             );
-  //           }
-  //         )
-  //       )
-  //       .subscribe(
-  //         (combinedData) => {
-  //           this.funcionarios = combinedData;
-  //           this.setupDataSource(combinedData);
-  //         },
-  //         (error) => {
-  //           //console.error("Error al obtener los datos:", error);
-  //         }
-  //       );
-  //   }
-
   async loadFuncionariosAndRegistros() {
     try {
       const combinedData = await forkJoin({
@@ -149,7 +91,6 @@ export class FuncionariosComponent implements AfterViewInit {
           'estado',
           'true'
         ),
-        //detalles: this.detalleService.getDetalles(),
       }).toPromise();
 
       this.funcionarios = [
@@ -157,7 +98,6 @@ export class FuncionariosComponent implements AfterViewInit {
           combinedData?.funcionarios,
           combinedData?.registros,
           combinedData?.dependencias
-          //combinedData?.detalles
         ),
       ];
       this.setupDataSource(this.funcionarios);
@@ -203,48 +143,6 @@ export class FuncionariosComponent implements AfterViewInit {
           ? registrosFuncionario[0].id_cargo.nombre
           : 'SIN ASIGNACION';
 
-      // Calcular días de vacaciones para contratos tipo "ITEM"
-      let diasVacaciones = 0;
-      if (registrosFuncionario.length > 0) {
-        const registro = registrosFuncionario[0];
-        let contrato =
-          registrosFuncionario.length > 0 && registrosFuncionario[0].id_cargo
-            ? registrosFuncionario[0].id_cargo.contrato
-            : 'SIN ASIGNACION';
-        if (contrato === 'ITEM') {
-          const fechaIngreso = new Date(registro.fecha_ingreso);
-          const fechaActual = new Date();
-
-          // Calcular años de servicio
-          let añosServicio =
-            fechaActual.getFullYear() - fechaIngreso.getFullYear();
-
-          // Ajustar por diferencia de meses y días
-          if (
-            fechaActual.getMonth() < fechaIngreso.getMonth() ||
-            (fechaActual.getMonth() === fechaIngreso.getMonth() &&
-              fechaActual.getDate() < fechaIngreso.getDate())
-          ) {
-            añosServicio--;
-          }
-
-          // Calcular días de vacaciones en función de los años de servicio
-          if (añosServicio >= 1) {
-            if (añosServicio === 1) {
-              diasVacaciones = 15;
-            } else if (añosServicio >= 2 && añosServicio <= 5) {
-              // Hasta el quinto año, 15 días anuales
-              diasVacaciones = 15 * 2;
-            } else if (añosServicio === 6) {
-              diasVacaciones = 15 + 20;
-            } else {
-              // A partir del sexto año, 20 días anuales
-              diasVacaciones = 20 * 2; // Vacaciones acumuladas de los últimos dos años
-            }
-          }
-        }
-      }
-
       //console.log(registrosFuncionario);
 
       return {
@@ -252,7 +150,6 @@ export class FuncionariosComponent implements AfterViewInit {
         registros: registrosFuncionario,
         cargo: cargo,
         sigla: dependencia ? dependencia.sigla : 'Sin dependencia.',
-        diasVacaciones,
       };
     });
   }
@@ -274,12 +171,6 @@ export class FuncionariosComponent implements AfterViewInit {
         (data.materno ? data.materno : '').toLowerCase();
       const casada = (data.casada ? data.casada : '').toLowerCase();
       const ci = (data.ci ? data.ci : '') + (data.ext ? data.ext : '');
-      //   const cargoToSearch =
-      //     data.registros &&
-      //     data.registros.length > 0 &&
-      //     data.registros[0].id_cargo
-      //       ? data.registros[0].id_cargo.nombre.toLowerCase()
-      //       : "";
 
       const cargoToSearch = data.cargo ? data.cargo.toLowerCase() : '';
       const contratoToSearch =
