@@ -36,6 +36,7 @@ import { HomeComponent } from './components/home/home.component';
 
 import { FuncionariosComponent } from './components/pages/funcionarios/funcionarios.component';
 import { MessageDialogComponent } from '../shared/components/message-dialog/message-dialog.component';
+import { DialogFuncionarioComponent } from './components/pages/funcionarios/dialog-funcionario/dialog-funcionario.component';
 
 // Define los formatos de fecha
 export const MY_DATE_FORMATS = {
@@ -57,6 +58,7 @@ export const MY_DATE_FORMATS = {
     HomeComponent,
     FuncionariosComponent,
     MessageDialogComponent,
+    DialogFuncionarioComponent,
   ],
   imports: [
     BrowserModule,

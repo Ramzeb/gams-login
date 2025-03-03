@@ -1,3 +1,18 @@
+.animated-text {
+  /* font-family: "Agdasima", sans-serif;*/
+  font-weight: 400;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10%;
+  display: inline-block;
+  letter-spacing: 1px;
+}
+
+.animated-g {
+  display: inline-block;
+  animation: jump 15s infinite;
+  color: rgb(44, 253, 243);
+}
 .example-container {
   display: flex;
   flex-direction: column;
@@ -95,4 +110,15 @@ mat-sidenav {
 /* Efecto de transición al cambiar de opción */
 a.mat-list-item {
   transition: all 0.3s ease;
+}
+
+/* Keyframes for jumping animation */
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(0) rotate(360deg); /* Move up and rotate */
+  }
 }

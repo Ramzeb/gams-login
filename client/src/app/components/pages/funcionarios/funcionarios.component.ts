@@ -18,6 +18,7 @@ import { DependenciasService } from '../../../services/dependencias.service';
 import { CargosService } from '../../../services/cargos.service';
 
 import { getColor, adjustPageSize } from '../../../utils/utils';
+import { DialogFuncionarioComponent } from './dialog-funcionario/dialog-funcionario.component';
 
 @Component({
   selector: 'app-funcionarios',
@@ -100,6 +101,7 @@ export class FuncionariosComponent implements AfterViewInit {
           combinedData?.dependencias
         ),
       ];
+      console.log(this.funcionarios);
       this.setupDataSource(this.funcionarios);
       this.cdr.detectChanges();
     } catch (error) {
@@ -139,7 +141,9 @@ export class FuncionariosComponent implements AfterViewInit {
       );
 
       const cargo =
-        registrosFuncionario.length > 0 && registrosFuncionario[0].id_cargo
+        registrosFuncionario &&
+        registrosFuncionario.length > 0 &&
+        registrosFuncionario[0].id_cargo
           ? registrosFuncionario[0].id_cargo.nombre
           : 'SIN ASIGNACION';
 
@@ -149,7 +153,7 @@ export class FuncionariosComponent implements AfterViewInit {
         ...funcionario,
         registros: registrosFuncionario,
         cargo: cargo,
-        sigla: dependencia ? dependencia.sigla : 'Sin dependencia.',
+        sigla: dependencia ? dependencia.sigla : 'SIN DEPENDENCIA',
       };
     });
   }
@@ -262,15 +266,45 @@ export class FuncionariosComponent implements AfterViewInit {
     return color;
   }
 
-  view(funcionario: any) {
-    // const dialogRef = this.dialog.open(DialogFuncionarioComponent, {
-    //   width: '600px',
-    //   data: funcionario, // Pasar los datos del cargo al componente de edición
-    // });
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     this.load();
-    //   }
-    // });
+  view(element: any) {
+    console.log(element);
+    let nombre = element && element.nombre ? element.nombre : '';
+    let paterno = element && element.paterno ? ' ' + element.paterno : '';
+    let materno = element && element.materno ? ' ' + element.materno : '';
+    let casada = element && element.casada ? ' ' + element.casada : '';
+
+    let nombreCompleto = nombre + paterno + materno + casada;
+    console.log(nombreCompleto);
+    let cargo = 'SIN ASIGNACIÓN';
+    if (element && element.registros && element.registros.length > 0) {
+      cargo =
+        (element.registros[0].id_cargo?.nombre
+          ? element.registros[0].id_cargo?.nombre
+          : '') +
+        (element.registros[0].id_cargo.contrato
+          ? ' (' + element.registros[0].id_cargo.contrato + ')'
+          : '') +
+        (element.registros[0].id_cargo.registro
+          ? '(' + element.registros[0].id_cargo.registro + ')'
+          : '(SIN REGISTRO)');
+    }
+    console.log(cargo);
+    let role = element.role && element.role.length > 0 ? element.role : '';
+    const dialogRef = this.dialog.open(DialogFuncionarioComponent, {
+      width: '600px',
+      data: {
+        _id: element._id,
+        nombre: nombreCompleto,
+        cargo: cargo,
+        role: role,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.load();
+      }
+    });
   }
+
+  modificar(element: any) {}
 }

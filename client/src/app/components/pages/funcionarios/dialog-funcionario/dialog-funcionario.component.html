@@ -1,0 +1,39 @@
+<h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
+
+<div class="detail">
+    <p>{{ data.cargo || "SIN REGISTRO" }}</p>
+</div>
+
+<mat-dialog-content class="content">
+    <form [formGroup]="roleForm">
+        <div formArrayName="roles" class="roles-container">
+            <div *ngFor="let sistema of roles.controls; let i = index" [formGroupName]="i" class="role-item">
+                <label class="role-label">
+                    <input type="checkbox" formControlName="activo" (change)="onCheckboxChange(i)">
+                    {{ sistemas[i].nombre }}
+                </label>
+
+                <mat-form-field appearance="outline" class="select-field">
+                    <mat-label>Seleccionar Nivel</mat-label>
+                    <mat-select formControlName="nivel" [ngClass]="{'required-field': isRequired(i)}">
+                        <mat-option *ngFor="let nivel of sistemas[i].niveles" [value]="nivel">
+                            {{ nivel }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="roles.controls[i].get('nivel')?.hasError('required')">
+                        El nivel es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+
+
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="form-button">
+    <button mat-flat-button color="warn" mat-dialog-close class="button-send">Cancelar</button>
+    <button mat-raised-button color="primary" [disabled]="roleForm.invalid" (click)="guardar()" class="button-send">
+        Guardar
+    </button>
+</mat-dialog-actions>

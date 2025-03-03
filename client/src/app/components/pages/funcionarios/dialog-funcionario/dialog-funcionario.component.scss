@@ -1,0 +1,81 @@
+.title {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+.detail {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1px;
+  text-align: center;
+}
+
+/* Contenedor para organizar en columnas */
+.roles-container {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(200px, 1fr)
+  ); /* 2 columnas en pantallas grandes */
+  gap: 16px;
+}
+
+/* Cada elemento de la lista */
+.role-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Evita que los selects sean demasiado anchos */
+.select-field {
+  width: 100%;
+  max-width: 250px; /* Ajusta el tamaño máximo */
+}
+
+.role-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botones alineados a la derecha */
+.form-button {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.button-send {
+  min-width: 100px;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .roles-container {
+    grid-template-columns: 1fr; /* 1 columna en pantallas pequeñas */
+  }
+}
+
+/* Personaliza el padding de las opciones de mat-select */
+.mat-select-trigger {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.mat-option {
+  padding: 8px; /* Padding para cada opción dentro de mat-select */
+  font-size: 14px; /* Puedes ajustar el tamaño de la fuente */
+}
+
+.required-field {
+  border-color: red !important; /* Resalta el borde del select cuando es requerido */
+}
+
+mat-select.ng-invalid.ng-touched {
+  border-color: red;
+}
+
+mat-error {
+  color: red;
+}

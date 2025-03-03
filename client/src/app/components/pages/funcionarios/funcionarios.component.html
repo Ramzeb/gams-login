@@ -91,13 +91,21 @@
                 <ng-container matColumnDef="options">
                     <th mat-header-cell *matHeaderCellDef> </th>
                     <td mat-cell *matCellDef="let element" class="form-options">
-                        <div>
-                            <button mat-menu-item (click)="view(element)">
-                                <mat-icon style="color: rgb(230, 201, 39);">visibility_on</mat-icon>
-                                <span style="color: rgb(255, 224, 51);">Detalle</span>
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon style="color: rgba(1, 255, 242, 0.808);">more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="modificar(element)">
+                                <mat-icon style="color: rgb(84, 209, 147);">edit</mat-icon>
+                                <span style="color: rgb(84, 209, 147);">Password</span>
                             </button>
-                        </div>
-
+                            <div *ngIf="element.estado === true">
+                                <button mat-menu-item (click)="view(element)">
+                                    <mat-icon style="color: rgb(134, 114, 0);">visibility_on</mat-icon>
+                                    <span style="color: rgb(134, 114, 0);">Accesos</span>
+                                </button>
+                            </div>
+                        </mat-menu>
                     </td>
                 </ng-container>
 
