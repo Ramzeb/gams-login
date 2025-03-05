@@ -267,11 +267,52 @@ export class FuncionariosComponent implements AfterViewInit {
   }
 
   view(element: any) {
+    //console.log(element);
+    let nombre = element && element.nombre ? element.nombre : '';
+    let paterno = element && element.paterno ? ' ' + element.paterno : '';
+    let materno = element && element.materno ? ' ' + element.materno : '';
+    let casada = element && element.casada ? ' ' + element.casada : '';
+
+    let nombreCompleto = nombre + paterno + materno + casada;
+    //console.log(nombreCompleto);
+    let cargo = 'SIN ASIGNACIÓN';
+    if (element && element.registros && element.registros.length > 0) {
+      cargo =
+        (element.registros[0].id_cargo?.nombre
+          ? element.registros[0].id_cargo?.nombre
+          : '') +
+        (element.registros[0].id_cargo.contrato
+          ? ' (' + element.registros[0].id_cargo.contrato + ')'
+          : '') +
+        (element.registros[0].id_cargo.registro
+          ? '(' + element.registros[0].id_cargo.registro + ')'
+          : '(SIN REGISTRO)');
+    }
+    //console.log(cargo);
+    let role = element.role && element.role.length > 0 ? element.role : '';
+    const dialogRef = this.dialog.open(DialogFuncionarioComponent, {
+      width: '600px',
+      data: {
+        _id: element._id,
+        nombre: nombreCompleto,
+        cargo: cargo,
+        role: role,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.load();
+      }
+    });
+  }
+
+  reset(element: any) {
     console.log(element);
     let nombre = element && element.nombre ? element.nombre : '';
     let paterno = element && element.paterno ? ' ' + element.paterno : '';
     let materno = element && element.materno ? ' ' + element.materno : '';
     let casada = element && element.casada ? ' ' + element.casada : '';
+    let ci = element.ci || '';
 
     let nombreCompleto = nombre + paterno + materno + casada;
     console.log(nombreCompleto);

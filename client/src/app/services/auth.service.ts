@@ -58,6 +58,26 @@ export class AuthService {
     return this.userFuncionario.getValue();
   }
 
+  updatePassword(user: {
+    id: string;
+    currentPassword: string;
+    newPassword: string;
+    options?: number;
+  }) {
+    user.options = 1;
+    return this.http.put<any>(`${base_url}/${user.id}`, user);
+  }
+
+  resetPassword(user: { id: string; newPassword: string; options?: number }) {
+    user.options = 2;
+    return this.http.put<any>(`${base_url}/${user.id}`, user);
+  }
+
+  updateRole(user: { id: string; role: any; options?: number }) {
+    user.options = 3;
+    return this.http.put<any>(`${base_url}/${user.id}`, user);
+  }
+
   login(credentials: {
     username: string;
     password: string;

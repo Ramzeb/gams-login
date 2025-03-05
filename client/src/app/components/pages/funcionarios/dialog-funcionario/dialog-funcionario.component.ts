@@ -1,6 +1,7 @@
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../../../services/auth.service';
 
 interface Role {
   acceso: number;
@@ -23,31 +24,33 @@ export class DialogFuncionarioComponent implements OnInit {
     {
       acceso: 2,
       nombre: 'MiOrganigrama',
-      niveles: ['user', 'visitor', 'admin', 'root'],
+      niveles: ['user', 'visitor', 'admin'],
     },
     {
       acceso: 3,
       nombre: 'MiPostulante',
-      niveles: ['user', 'visitor', 'admin', 'root'],
+      niveles: ['user', 'visitor', 'admin'],
     },
     {
       acceso: 4,
       nombre: 'MiSimulador',
-      niveles: ['user', 'visitor', 'admin', 'root'],
+      niveles: ['user', 'visitor', 'admin'],
     },
     { acceso: 5, nombre: 'MiMunicipio', niveles: ['user'] },
   ];
 
   constructor(
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private authService: AuthService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<DialogFuncionarioComponent>
   ) {
     this.roleForm = this.fb.group({ roles: this.fb.array([]) });
   }
 
   ngOnInit(): void {
     if (this.data) {
-      console.log(this.data);
+      //console.log(this.data);
       this.roleForm = this.fb.group({
         roles: this.fb.array([]),
       });
@@ -92,6 +95,22 @@ export class DialogFuncionarioComponent implements OnInit {
       .map(({ acceso, nivel }) => ({ acceso, nivel })); // 🔹 Mapea solo los campos necesarios
 
     console.log('Roles guardados:', rolesSeleccionados);
+
+    if (this.data && rolesSeleccionados) {
+      const payload = {
+        id: this.data?._id,
+        role: rolesSeleccionados,
+        options: 3,
+      };
+      this.authService.updateRole(payload).subscribe(
+        (response: any) => {
+          this.dialogRef.close(response);
+        },
+        (error: any) => {
+          //console.error("Error al llamar al servicio:", error);
+        }
+      );
+    }
 
     // Aquí puedes hacer la petición HTTP para actualizar los roles del usuario en el backend.
     // if (this.data) {

@@ -99,28 +99,61 @@ async function createElemento(req, res) {
 }
 
 async function updateElemento(req, res) {
-  const { id, currentPassword, newPassword } = req.body;
+  const { id, currentPassword, newPassword, role, options } = req.body;
   //console.log(req.body);
   try {
     const user = await User.findOne({ _id: id });
-    //console.log(user);
+    //Actualizar contraseña
+    if (options === 1) {
+      // Llamada al servicio de autenticación externo
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+      if (!passwordMatch) {
+        return res
+          .status(200)
+          .json({ success: false, message: "Contraseña actual incorrecta" });
+      }
 
-    // Llamada al servicio de autenticación externo
-    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      await user.save();
 
-    if (!passwordMatch) {
-      return res
-        .status(200)
-        .json({ success: false, message: "Contraseña actual incorrecta" });
+      return res.status(200).json({
+        success: true,
+        message: "Contraseña actualizada con éxito!",
+      });
+    } else if (options === 2) {
+      // Llamada al servicio de autenticación externo
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Contraseña actualizada con éxito!",
+      });
+    } else if (options === 3) {
+      // Actualizar rol
+      if (!role) {
+        return res.status(200).json({
+          success: false,
+          message: "El campo role es requerido",
+        });
+      }
+
+      user.role = role;
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Rol actualizado con éxito!",
+      });
     }
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-    await user.save();
-
     return res.status(200).json({
-      success: true,
-      message: "Contraseña actualizada con éxito!",
+      success: false,
+      message: "Opción no válida",
     });
   } catch (error) {
     return res.status(200).json({

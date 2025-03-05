@@ -22,7 +22,6 @@
             fixedTopGap="56" [opened]="mobileQuery.matches ===false">
 
             <mat-nav-list>
-
                 <a mat-list-item [class.active-link]="getActiveLink() === 'funcionarios'"
                     (click)="setActiveLink('funcionarios')" routerLink="funcionarios">
                     <div class="icon">
@@ -35,7 +34,6 @@
                         <span>Cerrar sesión</span>
                     </div>
                 </a>
-
             </mat-nav-list>
 
         </mat-sidenav>
