@@ -125,9 +125,9 @@ async function updateElemento(req, res) {
         message: "Contraseña actualizada con éxito!",
       });
     } else if (options === 2) {
-      // Llamada al servicio de autenticación externo
+      //Reestablecer contraseña
       const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(newPassword, salt);
+      user.password = await bcrypt.hash(String(user.ci), salt);
       await user.save();
 
       return res.status(200).json({

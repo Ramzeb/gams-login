@@ -111,44 +111,6 @@ export class DialogFuncionarioComponent implements OnInit {
         }
       );
     }
-
-    // Aquí puedes hacer la petición HTTP para actualizar los roles del usuario en el backend.
-    // if (this.data) {
-    //   //console.log(this.data);
-    //   let dataRestoreRegistro = {
-    //     fecha_ingreso: this.registro.fecha_ingreso || '',
-    //     fecha_conclusion: this.registro.fecha_conclusion || '',
-    //   };
-    //   let dataModifyRegistro = {
-    //     fecha_ingreso: this.FormRegistro.value.fecha_ingreso || '',
-    //     fecha_conclusion: this.FormRegistro.value.fecha_conclusion || '',
-    //   };
-    //   let result = compararCampos(
-    //     dataRestoreRegistro,
-    //     dataModifyRegistro,
-    //     this.data._id
-    //   );
-    //   this.registroService
-    //     .updateRegistro(this.data._id, {
-    //       ...this.FormRegistro.value,
-    //       userRegister: {
-    //         user: this.idName,
-    //         accion: 'UPDATE',
-    //         modulo: 'REGISTROS',
-    //         dato_inicial: result?.camposOriginales,
-    //         dato_modificado: result?.camposModificados,
-    //       },
-    //     })
-    //     .subscribe(
-    //       (response) => {
-    //         this.dialogRef.close(response);
-    //         //console.log("Respuesta del servicio:", response);
-    //       },
-    //       (error) => {
-    //         //console.error("Error al llamar al servicio:", error);
-    //       }
-    //     );
-    // }
   }
 
   onCheckboxChange(index: number): void {

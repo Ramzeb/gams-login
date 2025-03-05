@@ -92,12 +92,12 @@
                     <th mat-header-cell *matHeaderCellDef> </th>
                     <td mat-cell *matCellDef="let element" class="form-options">
                         <button mat-icon-button [matMenuTriggerFor]="menu">
-                            <mat-icon style="color: rgba(1, 255, 242, 0.808);">more_vert</mat-icon>
+                            <mat-icon style="color: rgba(4, 109, 104, 0.808);">more_vert</mat-icon>
                         </button>
                         <mat-menu #menu="matMenu">
-                            <button mat-menu-item (click)="modificar(element)">
-                                <mat-icon style="color: rgb(84, 209, 147);">edit</mat-icon>
-                                <span style="color: rgb(84, 209, 147);">Password</span>
+                            <button mat-menu-item (click)="reset(element)">
+                                <mat-icon style="color: rgb(84, 209, 147);">autorenew</mat-icon>
+                                <span style="color: rgb(84, 209, 147);">Reset Password</span>
                             </button>
                             <div *ngIf="element.estado === true">
                                 <button mat-menu-item (click)="view(element)">

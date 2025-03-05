@@ -19,6 +19,7 @@ import { CargosService } from '../../../services/cargos.service';
 
 import { getColor, adjustPageSize } from '../../../utils/utils';
 import { DialogFuncionarioComponent } from './dialog-funcionario/dialog-funcionario.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-funcionarios',
@@ -101,7 +102,7 @@ export class FuncionariosComponent implements AfterViewInit {
           combinedData?.dependencias
         ),
       ];
-      console.log(this.funcionarios);
+      //console.log(this.funcionarios);
       this.setupDataSource(this.funcionarios);
       this.cdr.detectChanges();
     } catch (error) {
@@ -307,42 +308,37 @@ export class FuncionariosComponent implements AfterViewInit {
   }
 
   reset(element: any) {
-    console.log(element);
+    //console.log(element);
     let nombre = element && element.nombre ? element.nombre : '';
     let paterno = element && element.paterno ? ' ' + element.paterno : '';
     let materno = element && element.materno ? ' ' + element.materno : '';
     let casada = element && element.casada ? ' ' + element.casada : '';
-    let ci = element.ci || '';
 
     let nombreCompleto = nombre + paterno + materno + casada;
-    console.log(nombreCompleto);
-    let cargo = 'SIN ASIGNACIÓN';
-    if (element && element.registros && element.registros.length > 0) {
-      cargo =
-        (element.registros[0].id_cargo?.nombre
-          ? element.registros[0].id_cargo?.nombre
-          : '') +
-        (element.registros[0].id_cargo.contrato
-          ? ' (' + element.registros[0].id_cargo.contrato + ')'
-          : '') +
-        (element.registros[0].id_cargo.registro
-          ? '(' + element.registros[0].id_cargo.registro + ')'
-          : '(SIN REGISTRO)');
-    }
-    console.log(cargo);
-    let role = element.role && element.role.length > 0 ? element.role : '';
-    const dialogRef = this.dialog.open(DialogFuncionarioComponent, {
-      width: '600px',
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '450px',
       data: {
-        _id: element._id,
-        nombre: nombreCompleto,
-        cargo: cargo,
-        role: role,
+        message: `¿Esta seguro/a de reestablecer la contraseña de ${nombreCompleto}?`,
       },
     });
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.load();
+        const user = {
+          id: element?._id,
+          newPassword: element.ci,
+        };
+        this.authService.resetPassword(user).subscribe(
+          (response: any) => {
+            this.load();
+          },
+          (error: any) => {
+            //console.error("Error al llamar al servicio:", error);
+          }
+        );
+      } else {
+        //console.log("La eliminación ha sido cancelada.");
       }
     });
   }

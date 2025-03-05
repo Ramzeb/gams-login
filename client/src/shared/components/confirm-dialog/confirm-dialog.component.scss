@@ -39,19 +39,26 @@
   width: 100%;
   display: flex;
   justify-content: space-around;
+  margin-bottom: 5px;
 }
 
 .buttons .on {
+  width: 50px;
   background-color: rgb(216, 216, 216);
-  color: black;
+  color: rgb(15, 15, 15);
+  border: none;
+  border-radius: 10px;
 }
 .buttons .on:hover {
-  background-color: black;
+  background-color: rgb(26, 26, 26);
   color: white;
 }
 
 .buttons .off {
+  width: 50px;
   background-color: #d92828;
+  border: none;
+  border-radius: 10px;
 }
 .buttons .off:hover {
   background-color: #ff2828;
