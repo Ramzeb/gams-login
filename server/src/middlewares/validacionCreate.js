@@ -327,6 +327,32 @@ function validarRegistro(requerido = true, actualizar = false) {
   ];
 }
 
+function validarContenido(requerido = true, actualizar = false) {
+  return [
+    validarCampo("titulo", {
+      requerido: true,
+      longitudMaxima: 50,
+    }),
+    validarCampo("encabezado", {
+      requerido: true,
+      longitudMaxima: 50,
+    }),
+    validarCampo("denominacion", {
+      requerido: true,
+      longitudMaxima: 5,
+    }),
+    validarCampo("categoria", {
+      requerido: true,
+      lista: ["HORA", "FECHA"],
+    }),
+    validarCampo("descripcion", {
+      requerido: true,
+      longitudMaxima: 150,
+    }),
+    validarCampo("estado", { requerido: false, tipoBooleano: true }),
+  ];
+}
+
 module.exports = {
   validarDependencia,
   validarUnidad,
@@ -336,4 +362,5 @@ module.exports = {
   validarUsuario,
   validarCargo,
   validarRegistro,
+  validarContenido,
 };

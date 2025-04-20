@@ -52,6 +52,7 @@ mat-sidenav {
 .icon {
   display: flex;
   align-items: left;
+  font-weight: 450;
 }
 
 .icon span {
@@ -61,7 +62,6 @@ mat-sidenav {
 /*cambiar color hover menu*/
 a:hover * {
   transition: 1.5ms;
-  font-size: 17px;
   //color: rgb(44, 253, 243);
   color: rgb(1, 134, 149);
 }

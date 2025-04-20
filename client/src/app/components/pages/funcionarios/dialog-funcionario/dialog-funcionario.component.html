@@ -32,8 +32,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="form-button">
-    <button mat-flat-button color="warn" mat-dialog-close class="button-send">Cancelar</button>
     <button mat-raised-button color="primary" [disabled]="roleForm.invalid" (click)="guardar()" class="button-send">
         Guardar
     </button>
+    <button mat-flat-button color="warn" mat-dialog-close class="button-send">Cancelar</button>
 </mat-dialog-actions>

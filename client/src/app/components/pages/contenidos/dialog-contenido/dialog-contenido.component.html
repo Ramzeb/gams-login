@@ -1,0 +1,64 @@
+<h5 mat-dialog-title style="text-align: center; font-weight: 400;">Agregar Nueva Solicitud</h5>
+
+<div mat-dialog-content>
+    <form [formGroup]="formulario" style="margin-top: 5px;">
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="titulo" maxlength="50">
+            <mat-hint align="end">{{ formulario.get('titulo')?.value?.length || 0 }}/50</mat-hint>
+            <mat-error *ngIf="formulario.get('titulo')?.hasError('required')">
+                El título es obligatorio.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Encabezado</mat-label>
+            <input matInput formControlName="encabezado" maxlength="50">
+            <mat-hint align="end">{{ formulario.get('encabezado')?.value?.length || 0 }}/50</mat-hint>
+            <mat-error *ngIf="formulario.get('encabezado')?.hasError('required')">
+                El encabezado es obligatorio.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="descripcion" maxlength="200" rows="4"></textarea>
+            <mat-hint align="end">{{ formulario.get('descripcion')?.value?.length || 0 }}/150</mat-hint>
+            <mat-error *ngIf="formulario.get('descripcion')?.hasError('required')">
+                La descripción es obligatoria.
+            </mat-error>
+            <mat-error *ngIf="formulario.get('denominacion')?.hasError('maxlength')">
+                Máximo 5 caracteres.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Denominación</mat-label>
+            <input matInput formControlName="denominacion" maxlength="5">
+            <mat-hint align="end">{{ formulario.get('denominacion')?.value?.length || 0 }}/5</mat-hint>
+            <mat-error *ngIf="formulario.get('denominacion')?.hasError('required')">
+                La denominación es obligatoria.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="categoria" required>
+                <mat-option value="HORA">HORA</mat-option>
+                <mat-option value="FECHA">FECHA</mat-option>
+            </mat-select>
+            <mat-error *ngIf="formulario.get('categoria')?.hasError('required')">
+                La categoría es obligatoria.
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>
+
+<hr style="margin: 16px 0;" />
+
+<div mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" [disabled]="formulario.invalid" (click)="guardar()">
+        Guardar
+    </button>
+    <button mat-flat-button color="warn" mat-dialog-close (click)="cerrar()">Cancelar</button>
+</div>

@@ -9,6 +9,7 @@ const controladores = {
   login: require("../controllers/usuarios.controller"),
   cargo: require("../controllers/cargos.controller"),
   registro: require("../controllers/registros.controller"),
+  contenido: require("../controllers/contenidos.controller"),
 };
 
 function rutas(router, controlador, validadorCrear, validadorActualizar) {

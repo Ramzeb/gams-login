@@ -1,0 +1,116 @@
+<div class="container-fluid">
+    <div class="drop">
+        <div class="drop-add">
+            <mat-toolbar>
+                <button class="load"><span (click)="cargarContenidos()">SOLICITUDES</span></button>
+                <button (click)="agregarContenido()" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                </button>
+            </mat-toolbar>
+        </div>
+    </div>
+
+    <div>
+        <div class="cards">
+            <mat-card *ngFor="let contenido of contenidos" class="contenido-card" appearance="outlined">
+                <ng-container *ngIf="editandoId !== contenido._id">
+                    <div [ngClass]="{ 'inactivo': !contenido.estado }">
+                        <h4>{{ contenido.titulo | uppercase}}</h4>
+                        <h6>{{ capitalizePrimeraLetra(contenido.encabezado || "") }}</h6>
+                        <p>{{ capitalizePrimeraLetra(contenido.descripcion || "")}}</p>
+                        <p><strong>Denominación:</strong> {{ contenido.denominacion }} <strong>Categoría:</strong> {{
+                            contenido.categoria }}</p>
+                    </div>
+                    <hr style="margin: 16px 0;" />
+                    <div style="display: flex; justify-content: right;">
+                        <button mat-icon-button color="primary" matTooltip="Editar" (click)="editar(contenido._id)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button *ngIf="" mat-icon-button color="warn" matTooltip="Eliminar"
+                            (click)="eliminar(contenido._id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <button mat-icon-button [color]="contenido.estado ? 'accent' : 'warn'"
+                            matTooltip="{{ contenido.estado ? 'Desactivar' : 'Activar' }}"
+                            (click)="toggleActivo(contenido)">
+                            <mat-icon>{{ contenido.estado ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="editandoId === contenido._id">
+                    <form [formGroup]="formularios[contenido._id]">
+
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Título</mat-label>
+                            <input matInput formControlName="titulo" required maxlength="50" />
+                            <mat-hint align="end">{{ formularios[contenido._id].get('titulo')?.value?.length || 0
+                                }}/50</mat-hint>
+                            <mat-error *ngIf="formularios[contenido._id].get('titulo')?.hasError('required')">
+                                El título es requerido.
+                            </mat-error>
+                            <mat-error *ngIf="formularios[contenido._id].get('titulo')?.hasError('maxlength')">
+                                Máximo 50 caracteres.
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Encabezado</mat-label>
+                            <input matInput formControlName="encabezado" required maxlength="50" />
+                            <mat-hint align="end">{{ formularios[contenido._id].get('encabezado')?.value?.length || 0
+                                }}/50</mat-hint>
+                            <mat-error *ngIf="formularios[contenido._id].get('encabezado')?.hasError('required')">
+                                El encabezado es requerido.
+                            </mat-error>
+                            <mat-error *ngIf="formularios[contenido._id].get('encabezado')?.hasError('maxlength')">
+                                Máximo 50 caracteres.
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput formControlName="descripcion" required maxlength="150"></textarea>
+                            <mat-hint align="end">{{ formularios[contenido._id].get('descripcion')?.value?.length || 0
+                                }}/150</mat-hint>
+                            <mat-error *ngIf="formularios[contenido._id].get('descripcion')?.hasError('required')">
+                                La descripción es requerida.
+                            </mat-error>
+                            <mat-error *ngIf="formularios[contenido._id].get('descripcion')?.hasError('maxlength')">
+                                Máximo 150 caracteres.
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Denominación</mat-label>
+                            <input matInput formControlName="denominacion" required maxlength="5" />
+                            <mat-hint align="end">{{ formularios[contenido._id].get('denominacion')?.value?.length || 0
+                                }}/5</mat-hint>
+                            <mat-error *ngIf="formularios[contenido._id].get('denominacion')?.hasError('required')">
+                                La denominación es requerida.
+                            </mat-error>
+                            <mat-error *ngIf="formularios[contenido._id].get('denominacion')?.hasError('maxlength')">
+                                Máximo 5 caracteres.
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Categoría</mat-label>
+                            <mat-select formControlName="categoria" required>
+                                <mat-option value="HORA">HORA</mat-option>
+                                <mat-option value="FECHA">FECHA</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="formularios[contenido._id].get('categoria')?.hasError('required')">
+                                La categoría es requerida.
+                            </mat-error>
+                        </mat-form-field>
+                        <div mat-dialog-actions align="end">
+                            <button mat-raised-button color="primary" (click)="guardar(contenido._id)"
+                                style="margin-right: 5px;">Guardar</button>
+                            <button mat-flat-button color="warn" (click)="cancelar()">Cancelar</button>
+                        </div>
+                    </form>
+                </ng-container>
+            </mat-card>
+        </div>
+    </div>
+</div>

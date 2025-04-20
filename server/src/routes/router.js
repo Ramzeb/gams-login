@@ -11,6 +11,7 @@ const {
   validarUsuario,
   validarCargo,
   validarRegistro,
+  validarContenido,
 } = require("../middlewares/validacionCreate");
 const {
   validarActualizacionPartida,
@@ -21,6 +22,7 @@ const {
   validarActualizacionUsuario,
   validarActualizacionCargo,
   validarActualizacionRegistro,
+  validarActualizacionContenido,
 } = require("../middlewares/validacionUpdate");
 
 // Rutas para Dependencias
@@ -56,5 +58,8 @@ rutas(router, "cargo", validarCargo, validarActualizacionCargo);
 
 // Rutas para Registros
 rutas(router, "registro", validarRegistro, validarActualizacionRegistro);
+
+// Rutas para Contenidos
+rutas(router, "contenido", validarContenido, validarActualizacionContenido);
 
 module.exports = router;
