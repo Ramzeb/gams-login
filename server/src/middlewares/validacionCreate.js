@@ -5,7 +5,6 @@ const Dependencia = require("../models/dependencias.model");
 const Unidad = require("../models/unidades.model");
 const Funcionario = require("../models/funcionarios.model");
 const Registro = require("../models/registros.model");
-const Usuario = require("../models/usuarios.model");
 
 //Una dependencia tiene una sigla que no se repite en ninguna otra.
 function validarDependencia(requerido = true, actualizar = false) {
@@ -173,7 +172,7 @@ function validarFuncionario(requerido = true, actualizar = false) {
     validarCampo("domicilio.numero_casa", {
       requerido: false,
       tipoEntero: true,
-      minNumero: 1,
+      //minNumero: 1,
       longitudMaxima: 5,
     }),
     // validarCampo("domicilio.telefono_casa", {
@@ -190,27 +189,6 @@ function validarFuncionario(requerido = true, actualizar = false) {
 
 function validarUsuario(requerido = true, actualizar = false) {
   return [];
-  //   return [
-  //     validarCampo("tipo", {
-  //       requerido,
-  //       enum: ["FUNCIONARIO", "VISITANTE", "USUARIO", "ADMINISTRADOR"],
-  //     }),
-  //     validarCampo("username", {
-  //       requerido,
-  //       longitudMinima: 6,
-  //       longitudMaxima: 15,
-  //       existeValues: Usuario,
-  //       actualizar,
-  //     }),
-  //     validarCampo("password", {
-  //       requerido,
-  //       longitudMinima: 6,
-  //       longitudMaxima: 15,
-  //     }),
-  //     validarCampo("estado", { requerido: false, tipoBooleano: true }),
-  //     validarCampo("id_funcionario", { tipoMongoId: true }),
-  //     validarCampo("id_usuario", { tipoMongoId: true }),
-  //   ];
 }
 
 function validarCargo(requerido = true /*, actualizar = false*/) {
@@ -288,11 +266,14 @@ function validarRegistro(requerido = true, actualizar = false) {
       requerido: false,
       lista: [
         "RENUNCIA",
+        "ABANDONO",
+        "CONCLUSION",
         "RESOLUCION",
         "ROTACION",
         "REASIGNACION",
         "ASCENSO",
         "AGRADECIMIENTO",
+        "TRANSFERENCIA",
       ],
     }),
     validarCampo("fecha_baja", { requerido: false }),
@@ -300,7 +281,7 @@ function validarRegistro(requerido = true, actualizar = false) {
     validarCampo("fecha_conclusion", { requerido, formatoFecha: true }),
     validarCampo("tipo_contrato", {
       requerido: false,
-      lista: ["MD", "MR", "MA", "CAPE"],
+      lista: ["MD", "MR", "MA", "MT", "CAPE"],
     }),
     validarCampo("cite", { requerido: false, longitudMaxima: 50 }),
     validarCampo("numero_contrato", { requerido: false, longitudMaxima: 10 }),
