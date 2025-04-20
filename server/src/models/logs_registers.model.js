@@ -16,6 +16,7 @@ const logs_registers = new mongoose.Schema({
       "CARGOS",
       "REGISTROS",
       "FUNCIONARIOS",
+      "DOCUMENTOS",
       "ROTACIONES",
       "DEPENDENCIAS",
       "NIVELES",

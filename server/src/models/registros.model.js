@@ -7,11 +7,14 @@ const registroSchema = new mongoose.Schema({
     uppercase: true,
     enum: [
       "RENUNCIA",
+      "ABANDONO",
+      "CONCLUSION",
       "RESOLUCION",
       "ROTACION",
       "REASIGNACION",
       "ASCENSO",
       "AGRADECIMIENTO",
+      "TRANSFERENCIA",
     ],
   },
   fecha_baja: {
@@ -43,7 +46,7 @@ const registroSchema = new mongoose.Schema({
   tipo_contrato: {
     type: String,
     uppercase: true,
-    enum: ["MD", "MR", "MA", "CAPE"],
+    enum: ["MD", "MR", "MA", "MT", "CAPE"],
   },
   cite: {
     type: String,

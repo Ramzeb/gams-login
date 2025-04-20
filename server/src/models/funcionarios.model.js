@@ -59,40 +59,47 @@ const funcionarioSchema = new mongoose.Schema({
   telefono: {
     type: Number,
     maxlength: [10, "El número de teléfono no debe exceder las 10 cifras."],
+    required: false,
   },
-  correo: {
-    type: String,
-    uppercase: true,
-    match: [
-      /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/,
-      "El correo electrónico no es válido.",
-    ],
-    maxlength: [35, "El correo no debe exceder los 35 caracteres"],
-  },
+  //   correo: {
+  //     type: String,
+  //     required: false,
+  //     uppercase: true,
+  //     match: [
+  //       /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/,
+  //       "El correo electrónico no es válido.",
+  //     ],
+  //     maxlength: [35, "El correo no debe exceder los 35 caracteres"],
+  //   },
   domicilio: {
     distrito: {
       type: String,
       uppercase: true,
       maxlength: [50, "El distrito no puede exceder los 50 caracteres."],
+      required: false,
     },
     zona: {
       type: String,
       uppercase: true,
       maxlength: [50, "La zona no puede exceder los 50 caracteres."],
+      required: false,
     },
     pasaje: {
       type: String,
       uppercase: true,
       maxlength: [50, "El pasaje no puede exceder los 50 caracteres."],
+      required: false,
     },
     calle: {
       type: String,
       uppercase: true,
       maxlength: [50, "La calle no puede exceder los 50 caracteres."],
+      required: false,
     },
     numero_casa: {
       type: Number,
       maxlength: [5, "El numero de casa no puede exceder los 5 dígitos."],
+      required: false,
     },
   },
   estado: {
