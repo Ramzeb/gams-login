@@ -37,6 +37,14 @@ async function createElemento(req, res) {
           {
             username: user.ci,
             role: "user",
+            modules: [
+              "organizaciones",
+              "representantes",
+              "postulantes",
+              "aprobados",
+              "funcionarios",
+              "deshabilitados",
+            ],
           },
           secretKey
         );
@@ -45,6 +53,14 @@ async function createElemento(req, res) {
           token,
           funcionario: user._id,
           role: "user",
+          modules: [
+            "organizaciones",
+            "representantes",
+            "postulantes",
+            "aprobados",
+            "funcionarios",
+            "deshabilitados",
+          ],
           name: user.nombre,
           status: true,
         });
@@ -66,6 +82,7 @@ async function createElemento(req, res) {
         {
           username: user.ci,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
+          modules: user.modules || [],
         },
         secretKey
         //{ expiresIn: "1h" } // El token expirará en 1 hora
@@ -77,6 +94,8 @@ async function createElemento(req, res) {
           token,
           funcionario: user._id,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
+          modules:
+            user.role.find((r) => r.acceso === role)?.toObject()?.modules || [],
           name: user.nombre,
           status: user.estado,
         });
