@@ -15,11 +15,14 @@
 }
 
 .drop-filter {
-  width: 90%;
+  width: 80%;
 }
 
 .drop-add {
-  margin-right: 5px;
+  display: flex;
+  min-width: 160px;
+  padding: 0;
+  margin: 0;
 }
 
 .drop-add mat-toolbar {
@@ -27,7 +30,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1%;
+  padding: 0;
   height: 80%;
   font-size: 15px;
 }
@@ -81,6 +84,9 @@
 
 .inactivos {
   background-color: #ff5c5c; /* Background color for the square */
+}
+.rotacion {
+  background-color: #c08701; /* Background color for the square */
 }
 
 @media only screen and (min-width: 2000px) {

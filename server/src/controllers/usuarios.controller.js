@@ -89,13 +89,17 @@ async function createElemento(req, res) {
       );
 
       if (token) {
+        console.log({
+          modules:
+            user.role.find((r) => r.acceso === role)?.toObject()?.modules || {},
+        });
         res.json({
           success: true,
           token,
           funcionario: user._id,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
           modules:
-            user.role.find((r) => r.acceso === role)?.toObject()?.modules || [],
+            user.role.find((r) => r.acceso === role)?.toObject()?.modules || {},
           name: user.nombre,
           status: user.estado,
         });

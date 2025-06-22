@@ -9,6 +9,7 @@ const controladores = {
   login: require("../controllers/usuarios.controller"),
   cargo: require("../controllers/cargos.controller"),
   registro: require("../controllers/registros.controller"),
+  rotacion: require("../controllers/rotaciones.controller"),
   contenido: require("../controllers/contenidos.controller"),
 };
 

@@ -334,6 +334,21 @@ function validarContenido(requerido = true, actualizar = false) {
   ];
 }
 
+function validarRotacion(requerido = true, actualizar = false) {
+  return [
+    validarCampo("fecha_ingreso", { requerido, formatoFecha: true }),
+    validarCampo("fecha_conclusion", { requerido, formatoFecha: true }),
+    validarCampo("descripcion", {
+      requerido: false,
+      longitudMaxima: 100,
+    }),
+    //validarCampo("tipo", { requerido: true, lista: ["PERSONAL", "CARGO"] }),
+    validarCampo("estado", { requerido: false, tipoBooleano: true }),
+    validarCampo("id_registro", { requerido, tipoMongoId: true }),
+    validarCampo("id_cargo_rotacion", { requerido, tipoMongoId: true }),
+  ];
+}
+
 module.exports = {
   validarDependencia,
   validarUnidad,
@@ -344,4 +359,5 @@ module.exports = {
   validarCargo,
   validarRegistro,
   validarContenido,
+  validarRotacion,
 };

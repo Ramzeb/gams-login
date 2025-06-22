@@ -1,30 +1,54 @@
-const Registro = require("../models/registros.model");
+const Rotacion = require("../models/rotaciones.model");
 const controller = require("./controller");
 const logsController = require("./logs_registers.controller"); // Importar el controlador de logs
 
+const referencia = ["id_registro", "id_cargo_rotacion"];
 async function getElementos(req, res) {
-  const referencia = ["id_funcionario", "id_cargo", "historico.id_cargo"];
-  await controller.getAll(Registro, req, res, "registros", referencia);
+  await controller.getAll(Rotacion, req, res, "rotaciones", referencia);
 }
 
 async function getElemento(req, res) {
-  const referencia = ["id_cargo", "historico.id_cargo"];
-  await controller.getById(Registro, req, res, "Registro", referencia);
+  await controller.getById(Rotacion, req, res, "Rotacion", referencia);
 }
 
 async function getCampoFiltrado(req, res) {
-  const referencia = ["id_funcionario", "id_cargo", "historico.id_cargo"];
-  await controller.getByFilterCamp(Registro, req, res, "registros", referencia);
+  let values = {
+    id_registro: 1,
+    id_cargo_rotacion: 1,
+    detalle: 1,
+    estado: 1,
+  };
+  await controller.getByFilterCamp(
+    Rotacion,
+    req,
+    res,
+    "rotaciones",
+    referencia,
+    values
+  );
 }
 
 async function getElementoFiltrado(req, res) {
-  const referencia = ["id_funcionario", "id_cargo", "historico.id_cargo"];
-  await controller.getByFilter(Registro, req, res, "registros", referencia);
+  let reference = [];
+  let values = {
+    id_registro: 1,
+    id_cargo_rotacion: 1,
+    descripcion: 1,
+    estado: 1,
+  };
+  await controller.getByFilter(
+    Rotacion,
+    req,
+    res,
+    "rotaciones",
+    reference,
+    values
+  );
 }
 
 async function createElemento(req, res) {
   try {
-    await controller.create(Registro, req, res, "Registro");
+    await controller.create(Rotacion, req, res, "Rotacion");
 
     // Si la creación fue exitosa, registrar auditoría
     let userRegister = {
@@ -40,9 +64,8 @@ async function createElemento(req, res) {
 }
 
 async function updateElemento(req, res) {
-  const evaluarCampos = ["cargo", "abreviatura"];
   try {
-    await controller.update(Registro, req, res, "Registro", evaluarCampos);
+    await controller.update(Rotacion, req, res, "Rotacion");
 
     // Si la actualización fue exitosa, registrar auditoría
     let userRegister = {
@@ -59,7 +82,7 @@ async function updateElemento(req, res) {
 }
 
 async function deleteElemento(req, res) {
-  await controller.remove(Registro, req, res, "Registro");
+  await controller.remove(Rotacion, req, res, "Rotacion");
 }
 
 module.exports = {

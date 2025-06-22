@@ -20,6 +20,9 @@ import { CargosService } from '../../../services/cargos.service';
 import { getColor, adjustPageSize } from '../../../utils/utils';
 import { DialogFuncionarioComponent } from './dialog-funcionario/dialog-funcionario.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ExcelService } from '../../../services/excel.service';
+import { RotacionesService } from '../../../services/rotaciones.service';
+import { NivelesService } from '../../../services/niveles.service';
 
 @Component({
   selector: 'app-funcionarios',
@@ -50,7 +53,10 @@ export class FuncionariosComponent implements AfterViewInit {
     private cargosService: CargosService,
     private funcionariosService: FuncionariosService,
     private registrosService: RegistrosService,
+    private rotacionService: RotacionesService,
     private dependenciasService: DependenciasService,
+    private nivelesService: NivelesService,
+    private excelService: ExcelService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
@@ -58,7 +64,7 @@ export class FuncionariosComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    //this.visualizacionDatasource();
+    this.visualizacionDatasource();
     this.load();
   }
 
@@ -88,21 +94,25 @@ export class FuncionariosComponent implements AfterViewInit {
           'estado',
           'true'
         ),
-        registros: this.registrosService.getRegistros(),
+        registros: this.registrosService.getFiltroCampos('estado', 'true'),
+        rotaciones: this.rotacionService.getFiltroCampos('estado', 'true'),
         dependencias: this.dependenciasService.getFiltroCampos(
           'estado',
           'true'
         ),
+        niveles: this.nivelesService.getNiveles(),
       }).toPromise();
 
       this.funcionarios = [
         ...this.combineData(
           combinedData?.funcionarios,
           combinedData?.registros,
-          combinedData?.dependencias
+          combinedData?.rotaciones,
+          combinedData?.dependencias,
+          combinedData?.niveles
         ),
       ];
-      //console.log(this.funcionarios);
+      console.log(this.funcionarios);
       this.setupDataSource(this.funcionarios);
       this.cdr.detectChanges();
     } catch (error) {
@@ -113,7 +123,9 @@ export class FuncionariosComponent implements AfterViewInit {
   private combineData(
     funcionarios: any[],
     registros: any[],
-    dependencias: any[]
+    rotaciones: any[],
+    dependencias: any[],
+    niveles: any[]
   ): any[] {
     const filteredRegistros = this.filterRegistros(registros);
 
@@ -132,6 +144,17 @@ export class FuncionariosComponent implements AfterViewInit {
           registro.id_funcionario._id === funcionario._id
       );
 
+      // Filtrar las rotaciones correspondientes a los registros del funcionario
+      const rotacionesFuncionario = rotaciones.filter((rotacion: any) => {
+        if (!rotacion.id_registro) {
+          return false; // Omitir rotaciones sin id_registro
+        }
+
+        return registrosFuncionario.some((registro: any) => {
+          return registro._id === rotacion.id_registro;
+        });
+      });
+
       // Obtener la dependencia solo si hay registros válidos
       const dependenciaId =
         registrosFuncionario.length > 0 && registrosFuncionario[0].id_cargo
@@ -140,6 +163,13 @@ export class FuncionariosComponent implements AfterViewInit {
       const dependencia = dependencias.find(
         (dep: any) => dep && dep._id === dependenciaId
       );
+
+      // Obtener la dependencia solo si hay registros válidos
+      const nivelId =
+        registrosFuncionario.length > 0 && registrosFuncionario[0].id_cargo
+          ? registrosFuncionario[0].id_cargo.id_nivel_salarial
+          : null;
+      const nivel = niveles.find((niv: any) => niv && niv._id === nivelId);
 
       const cargo =
         registrosFuncionario &&
@@ -153,8 +183,11 @@ export class FuncionariosComponent implements AfterViewInit {
       return {
         ...funcionario,
         registros: registrosFuncionario,
+        rotaciones: rotacionesFuncionario,
         cargo: cargo,
-        sigla: dependencia ? dependencia.sigla : 'SIN DEPENDENCIA',
+        sigla: dependencia ? dependencia.sigla : 'Sin dependencia.',
+        nombre_nivel: nivel ? nivel.nombre : 'Sin nivel.',
+        haber_basico_nivel: nivel ? nivel.haber_basico : 'Sin nivel.',
       };
     });
   }
@@ -211,33 +244,31 @@ export class FuncionariosComponent implements AfterViewInit {
   }
 
   estadoByFilter(valor: string) {
+    const acceso = Number(valor);
     let estado;
-    if (valor === 'true') {
-      estado = this.funcionarios.filter(
-        (funcionario) => funcionario.estado === true
-      );
-      this.setupDataSource(estado);
-    } else if (valor === 'false') {
-      estado = this.funcionarios.filter(
-        (funcionario) => funcionario.estado === false
-      );
-      this.setupDataSource(estado);
-    } else if (valor === 'spin') {
+
+    if ([1, 2, 3, 4, 5].includes(acceso)) {
       estado = this.funcionarios.filter(
         (funcionario) =>
-          funcionario.rotaciones &&
-          funcionario.rotaciones.length > 0 &&
-          funcionario.rotaciones[0].estado === true
+          Array.isArray(funcionario?.role) &&
+          funcionario.role.some((access: any) => access.acceso === acceso)
       );
-      this.setupDataSource(estado);
+    } else if (acceso === 0) {
+      estado = this.funcionarios.filter(
+        (funcionario) =>
+          !Array.isArray(funcionario?.role) || // role no es arreglo
+          funcionario.role.length === 0 || // arreglo vacío
+          !funcionario.role.some((access: any) => access.acceso !== undefined) // sin campo acceso
+      );
     } else {
-      this.setupDataSource(this.funcionarios);
+      estado = this.funcionarios;
     }
+
+    this.setupDataSource(estado);
   }
 
   estadoSeleccion(event: any) {
     this.filtrarEstado = event.value;
-    //console.log(this.filtrarEstado);
     this.estadoByFilter(this.filtrarEstado);
   }
 
@@ -253,13 +284,73 @@ export class FuncionariosComponent implements AfterViewInit {
 
   filtradoExcel(): void {
     let anio = new Date().getFullYear();
-    const filteredData = this.dataSource.filteredData;
-    //console.log(filteredData);
-    // this.excelService.exportRegistroFuncionarios(
-    //   filteredData,
-    //   'funcionarios.xlsx',
-    //   anio
-    // );
+    let filteredData = this.dataSource.filteredData;
+    console.log(this.filtrarEstado);
+    let acceso;
+    if (this.filtrarEstado === '0') {
+      acceso = 'SIN ACCESO';
+    } else if (this.filtrarEstado === '1') {
+      acceso = 'MiADMINISTRADOR';
+    } else if (this.filtrarEstado === '2') {
+      acceso = 'MiORGANIGRAMA';
+    } else if (this.filtrarEstado === '3') {
+      acceso = 'MiPOSTULANTE';
+    } else if (this.filtrarEstado === '4') {
+      acceso = 'MiORGANIZACION';
+    } else if (this.filtrarEstado === '5') {
+      acceso = 'MiMUNICIPIO';
+    } else {
+      acceso = 'GENERAL';
+    }
+
+    if (this.filtrarEstado.toString() === 'spin') {
+      filteredData = filteredData.map((element: any) => {
+        const rotacionesFuncionario = this.cargos.filter(
+          (cargo: any) =>
+            cargo &&
+            element.rotaciones &&
+            element.rotaciones.length > 0 &&
+            cargo?._id === element.rotaciones[0].id_cargo_rotacion
+        );
+
+        const cargoPartida = this.cargos.filter(
+          (cargo: any) =>
+            cargo && cargo?._id === element?.registros[0].id_cargo._id
+        );
+        //console.log(rotacionesFuncionario);
+        return {
+          ...element,
+          siglaRotacion:
+            rotacionesFuncionario && rotacionesFuncionario.length > 0
+              ? rotacionesFuncionario[0].sigla
+              : '',
+          partidaRotacionNombre:
+            cargoPartida &&
+            cargoPartida.length > 0 &&
+            cargoPartida[0]?.id_partida &&
+            cargoPartida[0].id_partida?.nombre
+              ? cargoPartida[0].id_partida.nombre
+              : '',
+
+          partidaRotacionCodigo:
+            cargoPartida &&
+            cargoPartida.length > 0 &&
+            cargoPartida[0]?.id_partida &&
+            cargoPartida[0].id_partida?.codigo
+              ? cargoPartida[0].id_partida.codigo
+              : '',
+        };
+      });
+
+      //console.log("resultado: ", filteredData);
+    }
+    this.excelService.exportRegistroFuncionarios(
+      filteredData,
+      'Accesos.xlsx',
+      anio,
+      'PLANILLA DE PERSONAL CON ACCESO ' + acceso,
+      acceso
+    );
   }
 
   public getColors(contrato: string): string {

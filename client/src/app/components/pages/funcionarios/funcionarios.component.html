@@ -3,6 +3,10 @@
         <div class="drop-add">
             <mat-toolbar>
                 <button class="load"><span (click)="load()">FUNCIONARIOS</span></button>
+
+                <button mat-icon-button class="icon-button" (click)="filtradoExcel()" class="load">
+                    <mat-icon class="download-icon">cloud_download</mat-icon>
+                </button>
             </mat-toolbar>
         </div>
         <div class="drop-filter">
@@ -13,6 +17,22 @@
                 <button mat-icon-button matSuffix *ngIf="input.value !== ''" (click)="clearInput(input)">
                     <mat-icon>clear</mat-icon>
                 </button>
+            </mat-form-field>
+        </div>
+
+        <div class="">
+            <mat-form-field [style.width.px]="200">
+                <mat-label>Accesos</mat-label>
+                <mat-select (selectionChange)="estadoSeleccion($event)" [(ngModel)]="filtrarEstado"
+                    [disabled]="searchEstado">
+                    <mat-option value="none">Todos</mat-option>
+                    <mat-option value="0">Sin Accesos</mat-option>
+                    <mat-option value="5">MiMunicipio</mat-option>
+                    <mat-option value="3">MiPostulante</mat-option>
+                    <mat-option value="2">MiOrganigrama</mat-option>
+                    <mat-option value="4">MiOrganización</mat-option>
+                    <mat-option value="1">MiAdministrador</mat-option>
+                </mat-select>
             </mat-form-field>
         </div>
     </div>
