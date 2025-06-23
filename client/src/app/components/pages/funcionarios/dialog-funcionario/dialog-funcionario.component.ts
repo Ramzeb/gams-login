@@ -1,42 +1,47 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, FormControl } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
-
-interface Role {
-  acceso: number;
-  nivel: string;
-  _id?: string;
-}
 
 @Component({
   selector: 'app-dialog-funcionario',
   templateUrl: './dialog-funcionario.component.html',
-  styleUrl: './dialog-funcionario.component.scss',
+  styleUrls: ['./dialog-funcionario.component.scss'],
 })
 export class DialogFuncionarioComponent implements OnInit {
-  idName: any;
-  registro: any;
   roleForm: FormGroup;
+  Object = Object;
+
+  funcionalidadesPostulante: any = {
+    organizaciones: ['editar', 'agregar', 'descargar'],
+    postulantes: ['editar', 'agregar', 'descargar', 'aprobar', 'aval'],
+    representantes: [
+      'editar',
+      'agregar',
+      'descargar',
+      'funcionario',
+      'postulante',
+      'inactivo',
+    ],
+    aprobados: [
+      'editar',
+      'agregar',
+      'descargar',
+      'documento',
+      'aprobar',
+      'reprobar',
+      'aval',
+    ],
+    funcionarios: ['editar', 'descargar', 'aval'],
+    deshabilitados: ['editar', 'descargar', 'aval'],
+  };
 
   sistemas = [
-    { acceso: 1, nombre: 'MiAdministrador', niveles: ['user'] },
-    {
-      acceso: 2,
-      nombre: 'MiOrganigrama',
-      niveles: ['user', 'visitor', 'admin'],
-    },
-    {
-      acceso: 3,
-      nombre: 'MiPostulante',
-      niveles: ['user', 'visitor', 'admin'],
-    },
-    {
-      acceso: 4,
-      nombre: 'MiSimulador',
-      niveles: ['user', 'visitor', 'admin'],
-    },
-    { acceso: 5, nombre: 'MiMunicipio', niveles: ['user'] },
+    { acceso: 1, nombre: 'MiAdministrador' },
+    { acceso: 2, nombre: 'MiOrganigrama' },
+    { acceso: 3, nombre: 'MiPostulante' },
+    { acceso: 4, nombre: 'MiOrganizacion' },
+    { acceso: 5, nombre: 'MiMunicipio' },
   ];
 
   constructor(
@@ -49,86 +54,166 @@ export class DialogFuncionarioComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data) {
-      //console.log(this.data);
-      this.roleForm = this.fb.group({
-        roles: this.fb.array([]),
-      });
-
-      this.populateRoles();
-      // Verificamos que roles tenga el tipo correcto
-      const roles = this.roles.value as { activo: boolean; nivel: string }[];
-
-      roles.forEach((role, index) => {
-        this.onCheckboxChange(index); // Asegúrate de que el estado de cada rol se ajuste
-      });
-    }
+    this.populateRoles();
+    this.roles.controls.forEach((_, index) => this.onCheckboxChange(index));
   }
+
   get roles(): FormArray {
     return this.roleForm.get('roles') as FormArray;
   }
 
-  populateRoles() {
+  populateRoles(): void {
     this.sistemas.forEach((sistema) => {
-      const existingRole = this.data.role.find(
+      const existing = this.data.role?.find(
         (r: any) => r.acceso === sistema.acceso
       );
+      const modules =
+        sistema.acceso === 3
+          ? this.fb.group(this.buildModules(existing?.modules || {}))
+          : this.fb.group({});
+      const usuarios =
+        sistema.acceso === 3
+          ? this.fb.group(this.buildUsuarios(existing?.modules || {}))
+          : this.fb.group({});
+
       this.roles.push(
         this.fb.group({
           acceso: sistema.acceso,
-          nivel: [existingRole ? existingRole.nivel : ''],
-          activo: [!!existingRole],
+          activo: [!!existing],
+          nivel: [existing?.nivel || (sistema.acceso === 3 ? 'visitor' : '')],
+          modules,
+          usuarios,
         })
       );
     });
   }
 
-  guardar() {
-    const rolesSeleccionados = (
-      this.roleForm.value.roles as {
-        acceso: number;
-        nivel: string;
-        activo: boolean;
-      }[]
-    )
-      .filter(({ activo, nivel }) => activo && nivel !== '') // ✅ Solo roles activos con nivel definido
-      .map(({ acceso, nivel }) => ({ acceso, nivel })); // 🔹 Mapea solo los campos necesarios
+  buildModules(existingModules: any): any {
+    const group: any = {};
+    for (const mod in this.funcionalidadesPostulante) {
+      const modPerms: any = {};
+      this.funcionalidadesPostulante[mod].forEach((func: any) => {
+        modPerms[func] = this.fb.control(
+          !!existingModules?.[mod]?.includes(func)
+        );
+      });
+      group[mod] = this.fb.group(modPerms);
+    }
+    return group;
+  }
 
-    console.log('Roles guardados:', rolesSeleccionados);
-
-    if (this.data && rolesSeleccionados) {
-      const payload = {
-        id: this.data?._id,
-        role: rolesSeleccionados,
-        options: 3,
-      };
-      this.authService.updateRole(payload).subscribe(
-        (response: any) => {
-          this.dialogRef.close(response);
-        },
-        (error: any) => {
-          //console.error("Error al llamar al servicio:", error);
-        }
+  buildUsuarios(existingModules: any): any {
+    const group: any = {};
+    for (const mod in this.funcionalidadesPostulante) {
+      const tieneAcceso = Object.prototype.hasOwnProperty.call(
+        existingModules,
+        mod
       );
+      group[mod] = new FormControl(tieneAcceso);
     }
+    return group;
   }
 
+  guardar(): void {
+    const rolesSeleccionados = this.roles.controls
+      .map((ctrl) => {
+        const acceso = ctrl.get('acceso')?.value;
+        const activo = ctrl.get('activo')?.value;
+        const nivel = acceso === 3 ? 'visitor' : ctrl.get('nivel')?.value;
+
+        if (!activo || !nivel) return null;
+
+        const base: any = { acceso, nivel };
+
+        if (acceso === 3) {
+          const modules = ctrl.get('modules')?.value;
+          const usuarios = ctrl.get('usuarios')?.value;
+          const filtered: any = {};
+          for (const m in modules) {
+            const funcionesActivas = Object.keys(modules[m]).filter(
+              (f) => modules[m][f]
+            );
+            if (funcionesActivas.length > 0) {
+              filtered[m] = funcionesActivas;
+            } else if (usuarios[m]) {
+              filtered[m] = []; // acceso como usuario sin funcionalidades
+            }
+          }
+          base.modules = filtered;
+        }
+
+        return base;
+      })
+      .filter(Boolean);
+
+    const payload = {
+      id: this.data._id,
+      role: rolesSeleccionados,
+      options: 3,
+    };
+
+    this.authService.updateRole(payload).subscribe(
+      (res) => this.dialogRef.close(res),
+      (err) => console.error('Error al guardar roles', err)
+    );
+  }
+
+  // En onCheckboxChange habilitar o deshabilitar nivel solo si no es MiPostulante
   onCheckboxChange(index: number): void {
-    const role = this.roles.controls[index];
-
-    if (role.get('activo')?.value) {
-      role.get('nivel')?.enable();
-      role.get('nivel')?.setValidators([Validators.required]); // Hacer requerido
+    const role = this.roles.at(index);
+    const isActive = role.get('activo')?.value;
+    const acceso = role.get('acceso')?.value;
+    if (acceso !== 3) {
+      if (isActive) {
+        role.get('nivel')?.enable();
+      } else {
+        role.get('nivel')?.disable();
+        role.get('nivel')?.setValue('');
+      }
     } else {
-      role.get('nivel')?.disable();
-      role.get('nivel')?.clearValidators(); // Quitar validación
+      // Para MiPostulante nivel es fijo, no se habilita ni deshabilita
     }
-
-    role.get('nivel')?.updateValueAndValidity();
   }
 
-  isRequired(index: number): boolean {
-    const role = this.roles.controls[index];
-    return role.get('activo')?.value && role.get('nivel')?.hasError('required');
+  isChecked(modulo: string, permiso: string): boolean {
+    const miPostulante = this.roles.controls.find(
+      (ctrl) => ctrl.get('acceso')?.value === 3
+    );
+    return (
+      miPostulante?.get('modules')?.get(modulo)?.get(permiso)?.value || false
+    );
+  }
+
+  onUsuarioToggle(index: number, modulo: string, checked: boolean): void {
+    const usuarios = this.roles.at(index).get('usuarios') as FormGroup;
+    usuarios.get(modulo)?.setValue(checked);
+
+    if (!checked) {
+      // Si se desmarca el acceso como usuario, limpiar todas las funcionalidades del módulo
+      const modules = this.roles.at(index).get('modules') as FormGroup;
+      const modGroup = modules.get(modulo) as FormGroup;
+
+      if (modGroup) {
+        Object.keys(modGroup.controls).forEach((func) => {
+          modGroup.get(func)?.setValue(false);
+        });
+      }
+    }
+  }
+
+  onPermissionChange(
+    index: number,
+    modulo: string,
+    permiso: string,
+    checked: boolean
+  ): void {
+    const modules = this.roles
+      .at(index)
+      .get('modules')
+      ?.get(modulo) as FormGroup;
+    modules.get(permiso)?.setValue(checked);
+
+    const usuarios = this.roles.at(index).get('usuarios') as FormGroup;
+    usuarios.get(modulo)?.setValue(true); // marcar acceso al módulo si se activa alguna función
   }
 }

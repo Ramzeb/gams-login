@@ -112,7 +112,7 @@ export class FuncionariosComponent implements AfterViewInit {
           combinedData?.niveles
         ),
       ];
-      console.log(this.funcionarios);
+
       this.setupDataSource(this.funcionarios);
       this.cdr.detectChanges();
     } catch (error) {
@@ -285,7 +285,7 @@ export class FuncionariosComponent implements AfterViewInit {
   filtradoExcel(): void {
     let anio = new Date().getFullYear();
     let filteredData = this.dataSource.filteredData;
-    console.log(this.filtrarEstado);
+
     let acceso;
     if (this.filtrarEstado === '0') {
       acceso = 'SIN ACCESO';

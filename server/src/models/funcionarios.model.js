@@ -115,6 +115,11 @@ const funcionarioSchema = new mongoose.Schema({
     {
       acceso: Number,
       nivel: String,
+      modules: {
+        type: Map,
+        of: [String], // Cada clave es un módulo (ej: "postulantes") y su valor es un array de permisos
+        default: {},
+      },
     },
   ],
 });

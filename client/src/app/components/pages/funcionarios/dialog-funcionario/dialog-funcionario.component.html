@@ -1,39 +1,59 @@
-<h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
+<h2 mat-dialog-title>{{ data.nombre || "SIN REGISTRO" }}</h2>
+<p class="subtitle">{{ data.cargo || "SIN REGISTRO" }}</p>
 
-<div class="detail">
-    <p>{{ data.cargo || "SIN REGISTRO" }}</p>
-</div>
+<mat-dialog-content [formGroup]="roleForm">
+    <div formArrayName="roles">
+        <mat-accordion multi>
+            <mat-expansion-panel *ngFor="let sistema of roles.controls; let i = index" [formGroupName]="i">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-checkbox formControlName="activo" (change)="onCheckboxChange(i)">
+                            {{ sistemas[i].nombre }}
+                        </mat-checkbox>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
 
-<mat-dialog-content class="content">
-    <form [formGroup]="roleForm">
-        <div formArrayName="roles" class="roles-container">
-            <div *ngFor="let sistema of roles.controls; let i = index" [formGroupName]="i" class="role-item">
-                <label class="role-label">
-                    <input type="checkbox" formControlName="activo" (change)="onCheckboxChange(i)">
-                    {{ sistemas[i].nombre }}
-                </label>
+                <!-- Nivel fijo para MiPostulante -->
+                <div *ngIf="sistemas[i].acceso === 3" class="info-box">
+                    Nivel: visitor (fijo)
+                </div>
 
-                <mat-form-field appearance="outline" class="select-field">
+                <!-- Nivel seleccionable para otros -->
+                <mat-form-field *ngIf="sistemas[i].acceso !== 3" appearance="outline" class="select-field">
                     <mat-label>Seleccionar Nivel</mat-label>
-                    <mat-select formControlName="nivel" [ngClass]="{'required-field': isRequired(i)}">
-                        <mat-option *ngFor="let nivel of sistemas[i].niveles" [value]="nivel">
+                    <mat-select formControlName="nivel" [disabled]="!roles.controls[i].get('activo')?.value">
+                        <mat-option *ngFor="let nivel of ['user', 'visitor', 'admin']" [value]="nivel">
                             {{ nivel }}
                         </mat-option>
                     </mat-select>
-                    <mat-error *ngIf="roles.controls[i].get('nivel')?.hasError('required')">
-                        El nivel es obligatorio.
-                    </mat-error>
                 </mat-form-field>
 
-
-            </div>
-        </div>
-    </form>
+                <!-- Permisos especiales para MiPostulante -->
+                <div *ngIf="sistemas[i].acceso === 3 && roles.controls[i].get('activo')?.value" class="modules-box">
+                    <h4>Permisos para MiPostulante</h4>
+                    <div *ngFor="let modulo of Object.keys(funcionalidadesPostulante)">
+                        <strong>{{ modulo | titlecase }}</strong>
+                        <div [formGroupName]="'usuarios'">
+                            <mat-checkbox [formControlName]="modulo"
+                                (change)="onUsuarioToggle(i, modulo, $event.checked)">
+                                Usuario
+                            </mat-checkbox>
+                        </div>
+                        <div class="module-options">
+                            <mat-checkbox *ngFor="let permiso of funcionalidadesPostulante[modulo]"
+                                [checked]="isChecked(modulo, permiso)"
+                                (change)="onPermissionChange(i, modulo, permiso, $event.checked)">
+                                {{ permiso }}
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="form-button">
-    <button mat-raised-button color="primary" [disabled]="roleForm.invalid" (click)="guardar()" class="button-send">
-        Guardar
-    </button>
-    <button mat-flat-button color="warn" mat-dialog-close class="button-send">Cancelar</button>
+<mat-dialog-actions align="end">
+    <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
+    <button mat-raised-button color="primary" [disabled]="roleForm.invalid" (click)="guardar()">Guardar</button>
 </mat-dialog-actions>

@@ -37,14 +37,7 @@ async function createElemento(req, res) {
           {
             username: user.ci,
             role: "user",
-            modules: [
-              "organizaciones",
-              "representantes",
-              "postulantes",
-              "aprobados",
-              "funcionarios",
-              "deshabilitados",
-            ],
+            modules: [],
           },
           secretKey
         );
@@ -53,14 +46,7 @@ async function createElemento(req, res) {
           token,
           funcionario: user._id,
           role: "user",
-          modules: [
-            "organizaciones",
-            "representantes",
-            "postulantes",
-            "aprobados",
-            "funcionarios",
-            "deshabilitados",
-          ],
+          modules: [],
           name: user.nombre,
           status: true,
         });
@@ -89,10 +75,6 @@ async function createElemento(req, res) {
       );
 
       if (token) {
-        console.log({
-          modules:
-            user.role.find((r) => r.acceso === role)?.toObject()?.modules || {},
-        });
         res.json({
           success: true,
           token,
