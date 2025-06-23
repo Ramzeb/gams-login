@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ data.nombre || "SIN REGISTRO" }}</h2>
+<h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
 <p class="subtitle">{{ data.cargo || "SIN REGISTRO" }}</p>
 
 <mat-dialog-content [formGroup]="roleForm">
@@ -55,5 +55,6 @@
 
 <mat-dialog-actions align="end">
     <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
-    <button mat-raised-button color="primary" [disabled]="roleForm.invalid" (click)="guardar()">Guardar</button>
+    <button mat-raised-button color="primary" [disabled]="roleForm.invalid || roleForm.pristine"
+        (click)="guardar()">Guardar</button>
 </mat-dialog-actions>
