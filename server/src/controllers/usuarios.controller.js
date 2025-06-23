@@ -1,7 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const axios = require("axios");
 const User = require("../models/funcionarios.model");
 
 const secretKey = process.env.JWT_SECRET;
@@ -16,7 +15,7 @@ async function getElementoFiltrado(req, res) {}
 
 async function createElemento(req, res) {
   const { username, password, role } = req.body;
-  //console.log(req.body);
+  console.log(req.body);
   try {
     // Supongamos que el username tiene el formato "ci-ext"
     const [ci, ext] = username.split("-");
@@ -75,6 +74,16 @@ async function createElemento(req, res) {
       );
 
       if (token) {
+        console.log({
+          success: true,
+          token,
+          funcionario: user._id,
+          role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
+          modules:
+            user.role.find((r) => r.acceso === role)?.toObject()?.modules || {},
+          name: user.nombre,
+          status: user.estado,
+        });
         res.json({
           success: true,
           token,

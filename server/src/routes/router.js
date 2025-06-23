@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const { rutas } = require("./routerUtils");
+const validacionToken = require("../middlewares/validacionToken"); // Importa el middleware de verificación
+
 const {
   validarPartida,
   validarDependencia,
@@ -32,39 +34,57 @@ rutas(
   router,
   "dependencia",
   validarDependencia,
-  validarActualizacionDependencia
+  validarActualizacionDependencia,
+  [validacionToken]
 );
 
 // Rutas para Partidas
-rutas(router, "partida", validarPartida, validarActualizacionPartida);
+rutas(router, "partida", validarPartida, validarActualizacionPartida, [
+  validacionToken,
+]);
 
 // Rutas para Unidades
-rutas(router, "unidad", validarUnidad, validarActualizacionUnidad);
+rutas(router, "unidad", validarUnidad, validarActualizacionUnidad, [
+  validacionToken,
+]);
 
 // Rutas para Niveles
-rutas(router, "nivel", validarNivel, validarActualizacionNivel);
+rutas(router, "nivel", validarNivel, validarActualizacionNivel, [
+  validacionToken,
+]);
 
 // Rutas para Funcionarios
 rutas(
   router,
   "funcionario",
   validarFuncionario,
-  validarActualizacionFuncionario
+  validarActualizacionFuncionario,
+  [validacionToken]
 );
 
 // Rutas para Usuarios
-rutas(router, "login", validarUsuario, validarActualizacionUsuario);
+rutas(router, "login", validarUsuario, validarActualizacionUsuario, [
+  validacionToken,
+]);
 
 // Rutas para Cargos
-rutas(router, "cargo", validarCargo, validarActualizacionCargo);
+rutas(router, "cargo", validarCargo, validarActualizacionCargo, [
+  validacionToken,
+]);
 
 // Rutas para Registros
-rutas(router, "registro", validarRegistro, validarActualizacionRegistro);
+rutas(router, "registro", validarRegistro, validarActualizacionRegistro, [
+  validacionToken,
+]);
 
 // Rutas para Contenidos
-rutas(router, "contenido", validarContenido, validarActualizacionContenido);
+rutas(router, "contenido", validarContenido, validarActualizacionContenido, [
+  validacionToken,
+]);
 
 // Rutas para Rotaciones
-rutas(router, "rotacion", validarRotacion, validarActualizacionRotacion);
+rutas(router, "rotacion", validarRotacion, validarActualizacionRotacion, [
+  validacionToken,
+]);
 
 module.exports = router;

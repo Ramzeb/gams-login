@@ -13,33 +13,55 @@ const controladores = {
   contenido: require("../controllers/contenidos.controller"),
 };
 
-function rutas(router, controlador, validadorCrear, validadorActualizar) {
-  // recordar que para agregar una nueva ruta, se debe agregar a todos los controladores la ruta con la funcionalidad, dado  que es una funcionalidad estandarizada para todos los controladores.
+function rutas(
+  router,
+  controlador,
+  validadorCrear,
+  validadorActualizar,
+  middlewares = []
+) {
+  // Función para aplicar los middlewares de forma dinámica
+  const aplicarMiddlewares = (rutaMiddlewares) => [
+    ...middlewares,
+    ...rutaMiddlewares,
+  ];
 
-  router.get(`/${controlador}`, controladores[controlador].getElementos);
-  router.get(`/${controlador}/:id`, controladores[controlador].getElemento);
+  router.get(
+    `/${controlador}`,
+    aplicarMiddlewares([]),
+    controladores[controlador].getElementos
+  );
+  router.get(
+    `/${controlador}/:id`,
+    aplicarMiddlewares([]),
+    controladores[controlador].getElemento
+  );
   router.get(
     `/${controlador}/filtro/:campo/:value`,
+    aplicarMiddlewares([]),
     controladores[controlador].getElementoFiltrado
   );
   router.get(
     `/${controlador}/campo/:elemento/:campo/:value`,
+    aplicarMiddlewares([]),
     controladores[controlador].getCampoFiltrado
   );
   router.post(
     `/${controlador}`,
-    validadorCrear(),
-    validarSolicitud,
+    controlador === "login"
+      ? [validadorCrear(), validarSolicitud] // sin token
+      : aplicarMiddlewares([validadorCrear(), validarSolicitud]),
     controladores[controlador].createElemento
   );
+
   router.put(
     `/${controlador}/:id`,
-    validadorActualizar(),
-    validarSolicitud,
+    aplicarMiddlewares([validadorActualizar(), validarSolicitud]),
     controladores[controlador].updateElemento
   );
   router.delete(
     `/${controlador}/:id`,
+    aplicarMiddlewares([]),
     controladores[controlador].deleteElemento
   );
 }

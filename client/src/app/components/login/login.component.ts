@@ -47,6 +47,7 @@ export class LoginComponent {
       })
       .subscribe(
         (response: any) => {
+          console.log(response);
           if (!response.success) {
             // Si la respuesta indica fallo, muestra el mensaje de error
             this.errorMessage = response.message;
@@ -78,6 +79,7 @@ export class LoginComponent {
         (error: any) => {
           // Manejo de errores de red u otros problemas
           this.errorMessage = 'Error al conectar con el servidor.';
+          console.log(error);
         }
       );
   }

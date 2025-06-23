@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 import { server } from '../../environments/environment.staging';
 
@@ -13,33 +14,42 @@ const base_url = server.base_url + '/login';
 })
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
-  private userRole = new BehaviorSubject<string>(this.getUserRoleFromStorage());
   private userName = new BehaviorSubject<string>(this.getUserNameFromStorage());
   private userId = new BehaviorSubject<string>(this.getUserIdFromStorage());
-  private userFuncionario = new BehaviorSubject<string>(
-    this.getUserFuncionarioFromStorage()
-  );
+  private userStatus = new BehaviorSubject<string>(this.getStatusFromStorage());
+  private userDataSubject = new BehaviorSubject<any>(null);
+  //userRole para obtener el nivel de role dado que aun no tiene propiedades de acceso modular
+  private userRole = new BehaviorSubject<string>(this.getUserRoleFromStorage());
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private dialog: MatDialog
+  ) {
+    const savedData = localStorage.getItem('userData');
+    if (savedData) {
+      this.userDataSubject.next(JSON.parse(savedData));
+    }
+  }
 
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
-  }
-
-  private getUserIdFromStorage(): string {
-    return localStorage.getItem('id') || '';
   }
 
   private getUserRoleFromStorage(): string {
     return localStorage.getItem('role') || '';
   }
 
+  private getUserIdFromStorage(): string {
+    return localStorage.getItem('id') || '';
+  }
+
   private getUserNameFromStorage(): string {
     return localStorage.getItem('name') || '';
   }
 
-  private getUserFuncionarioFromStorage(): string {
-    return localStorage.getItem('funcionario') || '';
+  private getStatusFromStorage(): string {
+    return localStorage.getItem('status') || '';
   }
 
   getUserRole(): Observable<string> {
@@ -54,8 +64,17 @@ export class AuthService {
     return this.userName.getValue();
   }
 
-  getUserFuncionario(): string {
-    return this.userFuncionario.getValue();
+  getUserIdStatus(): string {
+    return this.userId.getValue();
+  }
+
+  getUseStatus(): Observable<string> {
+    return this.userStatus.asObservable();
+  }
+
+  getUserById(id: string): Observable<any> {
+    const noCacheParam = `nocache=${Date.now()}`;
+    return this.http.get<any>(`${base_url}/${id}?${noCacheParam}`);
   }
 
   updatePassword(user: {
@@ -87,17 +106,20 @@ export class AuthService {
     return this.http.post<any>(`${base_url}`, credentials).pipe(
       tap((user) => {
         if (user && user.token) {
-          //console.log(user);
           localStorage.setItem('token', user.token);
-          localStorage.setItem('role', user.role);
           localStorage.setItem('name', user.name);
-          localStorage.setItem('funcionario', user.funcionario);
-          localStorage.setItem('id', credentials.username);
+          localStorage.setItem('id', user.id);
+          localStorage.setItem('status', user.status);
+          localStorage.setItem('modules', JSON.stringify(user.modules || {}));
           this.loggedIn.next(true);
-          this.userRole.next(user.role);
           this.userName.next(user.name);
-          this.userFuncionario.next(user.funcionario);
-          this.userId.next(credentials.username);
+          this.userStatus.next(user.status);
+          this.userId.next(user.id);
+          this.userRole.next(user.role);
+          this.userDataSubject.next({
+            ...user,
+            modules: user.modules || {},
+          });
         }
       }),
       // Realiza la autenticación en el sistema remoto y guarda el token
@@ -116,9 +138,14 @@ export class AuthService {
   logout(): boolean {
     localStorage.removeItem('token');
     localStorage.removeItem('remote_token');
-    localStorage.removeItem('role');
     localStorage.removeItem('name');
-    localStorage.removeItem('funcionario');
+    localStorage.removeItem('status');
+    localStorage.removeItem('id');
+    localStorage.removeItem('modules');
+
+    // Detenemos la verificación del estado
+    this.dialog.closeAll();
+
     this.loggedIn.next(false);
     this.userRole.next('');
     this.userId.next('');
