@@ -3,7 +3,7 @@
         <div class="drop-add">
             <mat-toolbar>
                 <button class="load"><span (click)="cargarContenidos()">SOLICITUDES</span></button>
-                <button (click)="agregarContenido()" mat-icon-button>
+                <button (click)="agregarContenido()" mat-icon-button *ngIf="permissions.includes('agregar')">
                     <mat-icon>add</mat-icon>
                 </button>
             </mat-toolbar>
@@ -23,16 +23,17 @@
                     </div>
                     <hr style="margin: 16px 0;" />
                     <div style="display: flex; justify-content: right;">
-                        <button mat-icon-button color="primary" matTooltip="Editar" (click)="editar(contenido._id)">
+                        <button mat-icon-button color="primary" matTooltip="Editar" (click)="editar(contenido._id)"
+                            *ngIf="permissions.includes('editar')">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button *ngIf="" mat-icon-button color="warn" matTooltip="Eliminar"
-                            (click)="eliminar(contenido._id)">
+                        <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="eliminar(contenido._id)"
+                            *ngIf="permissions.includes('eliminar')">
                             <mat-icon>delete</mat-icon>
                         </button>
                         <button mat-icon-button [color]="contenido.estado ? 'accent' : 'warn'"
                             matTooltip="{{ contenido.estado ? 'Desactivar' : 'Activar' }}"
-                            (click)="toggleActivo(contenido)">
+                            (click)="toggleActivo(contenido)" *ngIf="permissions.includes('administrar')">
                             <mat-icon>{{ contenido.estado ? 'visibility' : 'visibility_off' }}</mat-icon>
                         </button>
                     </div>

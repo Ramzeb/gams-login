@@ -46,6 +46,7 @@ export class FuncionariosComponent implements AfterViewInit {
     'estado',
     'options',
   ];
+  permissions: string[] = [];
   dataSource = new MatTableDataSource<any>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(
@@ -61,6 +62,11 @@ export class FuncionariosComponent implements AfterViewInit {
     private dialog: MatDialog
   ) {
     this.idName = this.authService.getUserNameValue().toString();
+    this.authService.getAccessibleModules().subscribe((modules: any) => {
+      if (modules && modules['funcionarios']) {
+        this.permissions = modules['funcionarios'];
+      }
+    });
   }
 
   ngAfterViewInit(): void {

@@ -4,7 +4,8 @@
             <mat-toolbar>
                 <button class="load"><span (click)="load()">FUNCIONARIOS</span></button>
 
-                <button mat-icon-button class="icon-button" (click)="filtradoExcel()" class="load">
+                <button mat-icon-button class="icon-button" (click)="filtradoExcel()" class="load"
+                    *ngIf="permissions.includes('descargar')">
                     <mat-icon class="download-icon">cloud_download</mat-icon>
                 </button>
             </mat-toolbar>
@@ -111,20 +112,19 @@
                 <ng-container matColumnDef="options">
                     <th mat-header-cell *matHeaderCellDef> </th>
                     <td mat-cell *matCellDef="let element" class="form-options">
-                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <button mat-icon-button [matMenuTriggerFor]="menu"
+                            *ngIf="permissions.includes('reset')  || permissions.includes('editar')">
                             <mat-icon style="color: rgba(4, 109, 104, 0.808);">more_vert</mat-icon>
                         </button>
                         <mat-menu #menu="matMenu">
-                            <button mat-menu-item (click)="reset(element)">
+                            <button mat-menu-item (click)="reset(element)" *ngIf="permissions.includes('reset')">
                                 <mat-icon style="color: rgb(84, 209, 147);">autorenew</mat-icon>
                                 <span style="color: rgb(84, 209, 147);">Reset Password</span>
                             </button>
-                            <div *ngIf="element.estado === true">
-                                <button mat-menu-item (click)="view(element)">
-                                    <mat-icon style="color: rgb(134, 114, 0);">visibility_on</mat-icon>
-                                    <span style="color: rgb(134, 114, 0);">Accesos</span>
-                                </button>
-                            </div>
+                            <button mat-menu-item (click)="view(element)" *ngIf="permissions.includes('editar')">
+                                <mat-icon style="color: rgb(134, 114, 0);">visibility_on</mat-icon>
+                                <span style="color: rgb(134, 114, 0);">Accesos</span>
+                            </button>
                         </mat-menu>
                     </td>
                 </ng-container>

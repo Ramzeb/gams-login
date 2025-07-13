@@ -15,6 +15,7 @@ export class ContenidosComponent implements OnInit {
   contenidos: any[] = [];
   editandoId: string | null = null;
   formularios: { [id: string]: FormGroup } = {};
+  permissions: string[] = [];
 
   constructor(
     private authService: AuthService,
@@ -23,6 +24,11 @@ export class ContenidosComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.idName = this.authService.getUserNameValue().toString();
+    this.authService.getAccessibleModules().subscribe((modules: any) => {
+      if (modules && modules['contenidos']) {
+        this.permissions = modules['contenidos'];
+      }
+    });
   }
 
   ngOnInit(): void {
