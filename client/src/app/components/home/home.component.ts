@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -8,7 +9,8 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  accessibleModules$!: Observable<string[]>;
   mobileQuery: MediaQueryList;
   public activeLink: string = '';
 
@@ -17,7 +19,7 @@ export class HomeComponent {
   private _mobileQueryListener: () => void;
 
   constructor(
-    private auth: AuthService,
+    private authService: AuthService,
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher
   ) {
@@ -26,15 +28,23 @@ export class HomeComponent {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  ngOnInit(): void {
+    this.accessibleModules$ = this.authService.getAccessibleModules();
+    // Para ver el valor REAL emitido
+    // this.accessibleModules$.subscribe((mods) => {
+    //   console.log("✅ Módulos accesibles:", mods);
+    // });
+  }
+
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   logout() {
-    this.auth.logout();
+    this.authService.logout();
   }
   name() {
-    //console.log(this.auth.getUserName());
-    const name = this.auth.getUserNameValue().toString();
+    //console.log(this.authService.getUserName());
+    const name = this.authService.getUserNameValue().toString();
     return this.formatName(name);
   }
 

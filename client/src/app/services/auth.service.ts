@@ -18,8 +18,6 @@ export class AuthService {
   private userId = new BehaviorSubject<string>(this.getUserIdFromStorage());
   private userStatus = new BehaviorSubject<string>(this.getStatusFromStorage());
   private userDataSubject = new BehaviorSubject<any>(null);
-  //userRole para obtener el nivel de role dado que aun no tiene propiedades de acceso modular
-  private userRole = new BehaviorSubject<string>(this.getUserRoleFromStorage());
 
   constructor(
     private http: HttpClient,
@@ -36,10 +34,6 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  private getUserRoleFromStorage(): string {
-    return localStorage.getItem('role') || '';
-  }
-
   private getUserIdFromStorage(): string {
     return localStorage.getItem('id') || '';
   }
@@ -50,10 +44,6 @@ export class AuthService {
 
   private getStatusFromStorage(): string {
     return localStorage.getItem('status') || '';
-  }
-
-  getUserRole(): Observable<string> {
-    return this.userRole.asObservable();
   }
 
   getUserName(): Observable<string> {
@@ -115,7 +105,6 @@ export class AuthService {
           this.userName.next(user.name);
           this.userStatus.next(user.status);
           this.userId.next(user.id);
-          this.userRole.next(user.role);
           this.userDataSubject.next({
             ...user,
             modules: user.modules || {},
@@ -135,6 +124,26 @@ export class AuthService {
     );
   }
 
+  // Método para manejar módulos accesibles
+  getAccessibleModules(): Observable<string[]> {
+    return this.userDataSubject.pipe(
+      map((userData) => {
+        // Primero intenta obtener de userData, luego de localStorage
+        if (userData?.modules) {
+          return userData.modules;
+        }
+        const savedModules = localStorage.getItem('modules');
+        return savedModules ? JSON.parse(savedModules) : {};
+      })
+    );
+  }
+
+  hasAccessToModule(moduleName: string): Observable<boolean> {
+    return this.getAccessibleModules().pipe(
+      map((modules) => modules.includes(moduleName))
+    );
+  }
+
   logout(): boolean {
     localStorage.removeItem('token');
     localStorage.removeItem('remote_token');
@@ -147,7 +156,6 @@ export class AuthService {
     this.dialog.closeAll();
 
     this.loggedIn.next(false);
-    this.userRole.next('');
     this.userId.next('');
     this.router.navigate(['/login']); // Redirige al usuario a la página de inicio de sesión después de cerrar sesión
     return true;

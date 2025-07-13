@@ -47,39 +47,35 @@ export class LoginComponent {
       })
       .subscribe(
         (response: any) => {
-          console.log(response);
           if (!response.success) {
             // Si la respuesta indica fallo, muestra el mensaje de error
             this.errorMessage = response.message;
             return;
           }
-          this.authService.getUserRole().subscribe((userRole: any) => {
-            //console.log(userRole);
-            if (this.rememberMe) {
-              // Si el checkbox está marcado, guarda el nombre de usuario en LocalStorage
-              localStorage.setItem('rememberedUsername', this.username);
+          this.authService.getAccessibleModules().subscribe((modules: any) => {
+            if (modules && Object.keys(modules).length > 0) {
+              if (this.rememberMe) {
+                localStorage.setItem('rememberedUsername', this.username);
+              } else {
+                localStorage.removeItem('rememberedUsername');
+              }
+
+              let [ci, ext] = this.username.split('-');
+              if (ci === this.password) {
+                this.openModifyMessage();
+                return;
+              }
+
+              const firstModule = Object.keys(modules)[0];
+              this.router.navigate([`/${firstModule}`]);
             } else {
-              // Si no está marcado, elimina el nombre de usuario guardado
-              localStorage.removeItem('rememberedUsername');
-            }
-            let [ci, ext] = this.username.split('-');
-            // Verificar si la contraseña es igual al nombre de usuario
-            if (ci === this.password) {
-              this.openModifyMessage();
-              return;
-            }
-            if (userRole === 'user') {
-              this.router.navigate(['/funcionarios']);
-            } else {
-              this.errorMessage = 'Usuario sin rol válido.';
-              return;
+              this.errorMessage = 'No tiene acceso autorizado.';
             }
           });
         },
         (error: any) => {
           // Manejo de errores de red u otros problemas
           this.errorMessage = 'Error al conectar con el servidor.';
-          console.log(error);
         }
       );
   }

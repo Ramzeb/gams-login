@@ -21,9 +21,11 @@
         <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
             fixedTopGap="56" [opened]="mobileQuery.matches ===false">
 
-            <mat-nav-list>
+            <mat-nav-list *ngIf="accessibleModules$ | async as modules">
+
                 <a mat-list-item [class.active-link]="getActiveLink() === 'funcionarios'"
-                    (click)="setActiveLink('funcionarios')" routerLink="funcionarios">
+                    (click)="setActiveLink('funcionarios')" routerLink="funcionarios"
+                    *ngIf="modules?.hasOwnProperty('funcionarios')">
                     <div class="icon">
                         <mat-icon>people_outline</mat-icon><span>Funcionarios</span>
                     </div>
@@ -32,7 +34,7 @@
                 <mat-expansion-panel hideToggle style="width: 100%; padding: 0; margin: 0;">
                     <mat-expansion-panel-header mat-list-item [class.active-link]="getActiveLink() === 'settings'"
                         (click)="setActiveLink('settings')" routerLink="settings"
-                        style="padding: 0; padding-left: 15px;">
+                        *ngIf="modules?.hasOwnProperty('contenidos')" style="padding: 0; padding-left: 15px;">
                         <mat-panel-title style="width: 100%;">
                             <div class="icon">
                                 <mat-icon>tune</mat-icon>
@@ -43,7 +45,8 @@
 
                     <mat-nav-list style="width: 150%; margin: -8px 0px -20px -12px;">
                         <a mat-list-item [class.active-link]="getActiveLink() === 'contenidos'"
-                            (click)="setActiveLink('contenidos')" routerLink="contenidos">
+                            (click)="setActiveLink('contenidos')" routerLink="contenidos"
+                            *ngIf="modules?.hasOwnProperty('contenidos')">
                             <div class="icon">
                                 <mat-icon>assignment_late</mat-icon><span>Solicitudes</span>
                             </div>
