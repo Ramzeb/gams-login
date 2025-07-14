@@ -148,11 +148,14 @@ export class DialogFuncionarioComponent implements OnInit {
   }
 
   guardar(): void {
+    console.log('🧪 Formulario completo:', this.roleForm.value);
+
     const rolesSeleccionados = this.roles.controls
       .map((ctrl) => {
         const acceso = ctrl.get('acceso')?.value;
         const activo = ctrl.get('activo')?.value;
-        const nivel = acceso === 3 ? 'visitor' : ctrl.get('nivel')?.value;
+        const nivel =
+          acceso === 3 || acceso === 1 ? 'visitor' : ctrl.get('nivel')?.value;
 
         if (!activo || !nivel) return null;
 
@@ -186,6 +189,7 @@ export class DialogFuncionarioComponent implements OnInit {
       role: rolesSeleccionados,
       options: 3,
     };
+    console.log('📤 Payload enviado:', JSON.stringify(payload, null, 2));
 
     this.authService.updateRole(payload).subscribe(
       (res) => this.dialogRef.close(res),
