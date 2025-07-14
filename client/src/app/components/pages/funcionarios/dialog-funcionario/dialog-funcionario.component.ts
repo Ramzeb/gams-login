@@ -12,6 +12,11 @@ export class DialogFuncionarioComponent implements OnInit {
   roleForm: FormGroup;
   Object = Object;
 
+  funcionalidadesAdministrador: any = {
+    funcionarios: ['editar', 'reset', 'descargar'],
+    contenidos: ['editar', 'agregar', 'administrar', 'eliminar'],
+  };
+
   funcionalidadesPostulante: any = {
     organizaciones: ['editar', 'agregar', 'descargar'],
     postulantes: ['editar', 'agregar', 'descargar', 'aprobar', 'aval'],
@@ -67,20 +72,48 @@ export class DialogFuncionarioComponent implements OnInit {
       const existing = this.data.role?.find(
         (r: any) => r.acceso === sistema.acceso
       );
-      const modules =
-        sistema.acceso === 3
-          ? this.fb.group(this.buildModules(existing?.modules || {}))
-          : this.fb.group({});
-      const usuarios =
-        sistema.acceso === 3
-          ? this.fb.group(this.buildUsuarios(existing?.modules || {}))
-          : this.fb.group({});
+
+      let modules = this.fb.group({});
+      let usuarios = this.fb.group({});
+
+      if (sistema.acceso === 3) {
+        modules = this.fb.group(
+          this.buildModules(
+            this.funcionalidadesPostulante,
+            existing?.modules || {}
+          )
+        );
+        usuarios = this.fb.group(
+          this.buildUsuarios(
+            this.funcionalidadesPostulante,
+            existing?.modules || {}
+          )
+        );
+      }
+
+      if (sistema.acceso === 1) {
+        modules = this.fb.group(
+          this.buildModules(
+            this.funcionalidadesAdministrador,
+            existing?.modules || {}
+          )
+        );
+        usuarios = this.fb.group(
+          this.buildUsuarios(
+            this.funcionalidadesAdministrador,
+            existing?.modules || {}
+          )
+        );
+      }
 
       this.roles.push(
         this.fb.group({
           acceso: sistema.acceso,
           activo: [!!existing],
-          nivel: [existing?.nivel || (sistema.acceso === 3 ? 'visitor' : '')],
+          nivel: [
+            existing?.nivel ||
+              (sistema.acceso === 3 || sistema.acceso === 1 ? 'visitor' : ''),
+          ],
           modules,
           usuarios,
         })
@@ -88,11 +121,11 @@ export class DialogFuncionarioComponent implements OnInit {
     });
   }
 
-  buildModules(existingModules: any): any {
+  buildModules(funcionalidades: any, existingModules: any): any {
     const group: any = {};
-    for (const mod in this.funcionalidadesPostulante) {
+    for (const mod in funcionalidades) {
       const modPerms: any = {};
-      this.funcionalidadesPostulante[mod].forEach((func: any) => {
+      funcionalidades[mod].forEach((func: any) => {
         modPerms[func] = this.fb.control(
           !!existingModules?.[mod]?.includes(func)
         );
@@ -102,9 +135,9 @@ export class DialogFuncionarioComponent implements OnInit {
     return group;
   }
 
-  buildUsuarios(existingModules: any): any {
+  buildUsuarios(funcionalidades: any, existingModules: any): any {
     const group: any = {};
-    for (const mod in this.funcionalidadesPostulante) {
+    for (const mod in funcionalidades) {
       const tieneAcceso = Object.prototype.hasOwnProperty.call(
         existingModules,
         mod
@@ -125,10 +158,11 @@ export class DialogFuncionarioComponent implements OnInit {
 
         const base: any = { acceso, nivel };
 
-        if (acceso === 3) {
+        if (acceso === 3 || acceso === 1) {
           const modules = ctrl.get('modules')?.value;
           const usuarios = ctrl.get('usuarios')?.value;
           const filtered: any = {};
+
           for (const m in modules) {
             const funcionesActivas = Object.keys(modules[m]).filter(
               (f) => modules[m][f]
@@ -139,6 +173,7 @@ export class DialogFuncionarioComponent implements OnInit {
               filtered[m] = []; // acceso como usuario sin funcionalidades
             }
           }
+
           base.modules = filtered;
         }
 
@@ -175,13 +210,9 @@ export class DialogFuncionarioComponent implements OnInit {
     }
   }
 
-  isChecked(modulo: string, permiso: string): boolean {
-    const miPostulante = this.roles.controls.find(
-      (ctrl) => ctrl.get('acceso')?.value === 3
-    );
-    return (
-      miPostulante?.get('modules')?.get(modulo)?.get(permiso)?.value || false
-    );
+  isChecked(index: number, modulo: string, permiso: string): boolean {
+    const role = this.roles.at(index);
+    return role?.get('modules')?.get(modulo)?.get(permiso)?.value || false;
   }
 
   onUsuarioToggle(index: number, modulo: string, checked: boolean): void {
