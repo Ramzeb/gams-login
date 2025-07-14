@@ -148,7 +148,7 @@ export class DialogFuncionarioComponent implements OnInit {
   }
 
   guardar(): void {
-    console.log('🧪 Formulario completo:', this.roleForm.value);
+    //console.log('🧪 Formulario completo:', this.roleForm.value);
 
     const rolesSeleccionados = this.roles.controls
       .map((ctrl) => {
@@ -189,7 +189,7 @@ export class DialogFuncionarioComponent implements OnInit {
       role: rolesSeleccionados,
       options: 3,
     };
-    console.log('📤 Payload enviado:', JSON.stringify(payload, null, 2));
+    //console.log('📤 Payload enviado:', JSON.stringify(payload, null, 2));
 
     this.authService.updateRole(payload).subscribe(
       (res) => this.dialogRef.close(res),
@@ -202,7 +202,7 @@ export class DialogFuncionarioComponent implements OnInit {
     const role = this.roles.at(index);
     const isActive = role.get('activo')?.value;
     const acceso = role.get('acceso')?.value;
-    if (acceso !== 3) {
+    if (acceso !== 3 && acceso !== 1) {
       if (isActive) {
         role.get('nivel')?.enable();
       } else {
