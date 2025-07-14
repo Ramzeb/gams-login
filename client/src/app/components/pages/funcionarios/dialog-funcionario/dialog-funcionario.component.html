@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
-<p class="subtitle">{{ data.cargo || "SIN REGISTRO" }}</p>
+<p class="subtitle text-wrap">{{ data.cargo || "SIN REGISTRO" }}</p>
 
 <mat-dialog-content [formGroup]="roleForm">
     <div formArrayName="roles">
