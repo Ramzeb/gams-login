@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   fillerNav = Array.from({ length: 50 }, (_, i) => `Nav Item ${i + 1}`);
 
   private _mobileQueryListener: () => void;
-
+  showDropdown: boolean = false;
   constructor(
     private authService: AuthService,
     changeDetectorRef: ChangeDetectorRef,
@@ -58,5 +58,10 @@ export class HomeComponent implements OnInit {
 
   getActiveLink(): string {
     return this.activeLink;
+  }
+
+  // Alternar la visibilidad del menú desplegable
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
   }
 }
