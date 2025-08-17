@@ -13,22 +13,26 @@
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 
-                <!-- Nivel fijo para MiPostulante -->
-                <div *ngIf="sistemas[i].acceso === 3" class="info-box">
-                    Nivel: visitor (fijo)
-                </div>
-
                 <!-- Nivel fijo para MiAdministrador -->
                 <div *ngIf="sistemas[i].acceso === 1" class="info-box">
                     Nivel: visitor (fijo)
                 </div>
 
+                <!-- Nivel fijo para MiOrganigrama -->
+                <div *ngIf="sistemas[i].acceso === 2" class="info-box">
+                    Nivel: visitor (fijo)
+                </div>
+
+                <!-- Nivel fijo para MiPostulante -->
+                <div *ngIf="sistemas[i].acceso === 3" class="info-box">
+                    Nivel: visitor (fijo)
+                </div>
+
                 <!-- Nivel seleccionable para otros -->
-                <mat-form-field *ngIf="sistemas[i].acceso !== 1 && sistemas[i].acceso !== 3" appearance="outline"
-                    class="select-field">
+                <mat-form-field *ngIf="sistemas[i].acceso >= 4" appearance="outline" class="select-field">
                     <mat-label>Seleccionar Nivel</mat-label>
                     <mat-select formControlName="nivel" [disabled]="!roles.controls[i].get('activo')?.value">
-                        <mat-option *ngFor="let nivel of ['user', 'visitor', 'admin']" [value]="nivel">
+                        <mat-option *ngFor="let nivel of ['user', 'visitor', 'admin', 'root']" [value]="nivel">
                             {{ nivel }}
                         </mat-option>
                     </mat-select>
@@ -46,6 +50,26 @@
                         </div>
                         <div class="module-options">
                             <mat-checkbox *ngFor="let permiso of funcionalidadesAdministrador[modulo]"
+                                [checked]="isChecked(i, modulo, permiso)"
+                                (change)="onPermissionChange(i, modulo, permiso, $event.checked)">
+                                {{ permiso }}
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permisos especiales para MiOrganigrama -->
+                <div *ngIf="sistemas[i].acceso === 2 && roles.controls[i].get('activo')?.value" class="modules-box">
+                    <h4>MiOrganigrama</h4>
+                    <div *ngFor="let modulo of Object.keys(funcionalidadesOrganigrama)">
+                        <div [formGroupName]="'usuarios'">
+                            <strong>{{ modulo | titlecase }}</strong>
+                            <mat-checkbox [formControlName]="modulo"
+                                (change)="onUsuarioToggle(i, modulo, $event.checked)">
+                            </mat-checkbox>
+                        </div>
+                        <div class="module-options">
+                            <mat-checkbox *ngFor="let permiso of funcionalidadesOrganigrama[modulo]"
                                 [checked]="isChecked(i, modulo, permiso)"
                                 (change)="onPermissionChange(i, modulo, permiso, $event.checked)">
                                 {{ permiso }}

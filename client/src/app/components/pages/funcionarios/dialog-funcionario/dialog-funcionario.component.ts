@@ -17,6 +17,29 @@ export class DialogFuncionarioComponent implements OnInit {
     contenidos: ['editar', 'agregar', 'administrar', 'eliminar'],
   };
 
+  funcionalidadesOrganigrama: any = {
+    bandeja: ['aprobar'], //aprobar solicitudes
+    personal: [
+      'editar',
+      'agregar',
+      'detalle',
+      'rotacion',
+      'permiso',
+      'inactivar',
+      'descargar',
+    ],
+    cargos: ['editar', 'agregar', 'inactivar', 'descargar'],
+    niveles: ['editar', 'agregar'],
+    partidas: ['editar', 'agregar', 'inactivar', 'descargar'],
+    unidades: ['editar', 'agregar', 'detalle', 'inactivar', 'descargar'],
+    dependencias: ['editar', 'agregar', 'inactivar'],
+    seguros: ['editar', 'descargar'],
+    registros: ['editar', 'descargar'],
+    solicitudes: ['aprobar', 'descargar'],
+    documentos: ['editar', 'descargar'],
+    organigrama: ['editar', 'detalle'],
+  };
+
   funcionalidadesPostulante: any = {
     organizaciones: ['editar', 'agregar', 'descargar'],
     postulantes: ['editar', 'agregar', 'descargar', 'aprobar', 'aval'],
@@ -49,6 +72,8 @@ export class DialogFuncionarioComponent implements OnInit {
     { acceso: 5, nombre: 'MiMunicipio' },
   ];
 
+  accesoModular: any[] = [1, 2, 3];
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -68,6 +93,11 @@ export class DialogFuncionarioComponent implements OnInit {
   }
 
   populateRoles(): void {
+    const funcionalidadesMap: Record<number, any> = {
+      1: this.funcionalidadesAdministrador,
+      2: this.funcionalidadesOrganigrama,
+      3: this.funcionalidadesPostulante,
+    };
     this.sistemas.forEach((sistema) => {
       const existing = this.data.role?.find(
         (r: any) => r.acceso === sistema.acceso
@@ -76,31 +106,16 @@ export class DialogFuncionarioComponent implements OnInit {
       let modules = this.fb.group({});
       let usuarios = this.fb.group({});
 
-      if (sistema.acceso === 3) {
+      if (this.accesoModular.includes(sistema.acceso)) {
         modules = this.fb.group(
           this.buildModules(
-            this.funcionalidadesPostulante,
+            funcionalidadesMap[sistema.acceso],
             existing?.modules || {}
           )
         );
         usuarios = this.fb.group(
           this.buildUsuarios(
-            this.funcionalidadesPostulante,
-            existing?.modules || {}
-          )
-        );
-      }
-
-      if (sistema.acceso === 1) {
-        modules = this.fb.group(
-          this.buildModules(
-            this.funcionalidadesAdministrador,
-            existing?.modules || {}
-          )
-        );
-        usuarios = this.fb.group(
-          this.buildUsuarios(
-            this.funcionalidadesAdministrador,
+            funcionalidadesMap[sistema.acceso],
             existing?.modules || {}
           )
         );
@@ -110,10 +125,7 @@ export class DialogFuncionarioComponent implements OnInit {
         this.fb.group({
           acceso: sistema.acceso,
           activo: [!!existing],
-          nivel: [
-            existing?.nivel ||
-              (sistema.acceso === 3 || sistema.acceso === 1 ? 'visitor' : ''),
-          ],
+          nivel: [existing?.nivel || (sistema.acceso >= 4 ? 'visitor' : '')],
           modules,
           usuarios,
         })
@@ -154,14 +166,15 @@ export class DialogFuncionarioComponent implements OnInit {
       .map((ctrl) => {
         const acceso = ctrl.get('acceso')?.value;
         const activo = ctrl.get('activo')?.value;
-        const nivel =
-          acceso === 3 || acceso === 1 ? 'visitor' : ctrl.get('nivel')?.value;
+        const nivel = this.accesoModular.includes(acceso)
+          ? 'visitor'
+          : ctrl.get('nivel')?.value;
 
         if (!activo || !nivel) return null;
 
         const base: any = { acceso, nivel };
 
-        if (acceso === 3 || acceso === 1) {
+        if (this.accesoModular.includes(acceso)) {
           const modules = ctrl.get('modules')?.value;
           const usuarios = ctrl.get('usuarios')?.value;
           const filtered: any = {};
@@ -202,7 +215,7 @@ export class DialogFuncionarioComponent implements OnInit {
     const role = this.roles.at(index);
     const isActive = role.get('activo')?.value;
     const acceso = role.get('acceso')?.value;
-    if (acceso !== 3 && acceso !== 1) {
+    if (acceso >= 4) {
       if (isActive) {
         role.get('nivel')?.enable();
       } else {
@@ -210,6 +223,8 @@ export class DialogFuncionarioComponent implements OnInit {
         role.get('nivel')?.setValue('');
       }
     } else {
+      // Para MiAdminsitrador nivel es fijo, no se habilita ni deshabilita
+      // Para MiOrganigrama nivel es fijo, no se habilita ni deshabilita
       // Para MiPostulante nivel es fijo, no se habilita ni deshabilita
     }
   }
