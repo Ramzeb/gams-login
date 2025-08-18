@@ -29,7 +29,7 @@ export class DialogFuncionarioComponent implements OnInit {
       'descargar',
     ],
     cargos: ['editar', 'agregar', 'inactivar', 'descargar'],
-    niveles: ['editar', 'agregar'],
+    niveles: ['editar', 'agregar', 'inactivar'],
     partidas: ['editar', 'agregar', 'inactivar', 'descargar'],
     unidades: ['editar', 'agregar', 'detalle', 'inactivar', 'descargar'],
     dependencias: ['editar', 'agregar', 'inactivar'],
