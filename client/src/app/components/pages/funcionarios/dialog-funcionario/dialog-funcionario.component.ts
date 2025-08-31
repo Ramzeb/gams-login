@@ -64,12 +64,38 @@ export class DialogFuncionarioComponent implements OnInit {
     deshabilitados: ['editar', 'descargar', 'aval'],
   };
 
-  sistemas = [
-    { acceso: 1, nombre: 'MiAdministrador' },
-    { acceso: 2, nombre: 'MiOrganigrama' },
-    { acceso: 3, nombre: 'MiPostulante' },
-    { acceso: 4, nombre: 'MiOrganizacion' },
-    { acceso: 5, nombre: 'MiMunicipio' },
+  funcionalidadesMap: any = {
+    1: this.funcionalidadesAdministrador,
+    2: this.funcionalidadesOrganigrama,
+    3: this.funcionalidadesPostulante,
+  };
+
+  sistemas: any[] = [
+    {
+      acceso: 1,
+      nombre: 'MiAdministrador',
+      level: ['visitor', 'user', 'admin', 'root'],
+    },
+    {
+      acceso: 2,
+      nombre: 'MiOrganigrama',
+      level: ['visitor', 'user', 'admin', 'root'],
+    },
+    {
+      acceso: 3,
+      nombre: 'MiPostulante',
+      level: ['visitor', 'user', 'admin', 'root'],
+    },
+    {
+      acceso: 4,
+      nombre: 'MiOrganizacion',
+      level: ['visitor', 'user', 'admin', 'root'],
+    },
+    {
+      acceso: 5,
+      nombre: 'MiMunicipio',
+      level: ['user', 'admin', 'root'],
+    },
   ];
 
   accesoModular: any[] = [1, 2, 3];
@@ -125,7 +151,7 @@ export class DialogFuncionarioComponent implements OnInit {
         this.fb.group({
           acceso: sistema.acceso,
           activo: [!!existing],
-          nivel: [existing?.nivel || (sistema.acceso >= 4 ? 'visitor' : '')],
+          nivel: [existing?.nivel || (sistema.acceso >= 4 ? 'user' : '')],
           modules,
           usuarios,
         })
@@ -166,9 +192,7 @@ export class DialogFuncionarioComponent implements OnInit {
       .map((ctrl) => {
         const acceso = ctrl.get('acceso')?.value;
         const activo = ctrl.get('activo')?.value;
-        const nivel = this.accesoModular.includes(acceso)
-          ? 'visitor'
-          : ctrl.get('nivel')?.value;
+        const nivel = ctrl.get('nivel')?.value || 'visitor';
 
         if (!activo || !nivel) return null;
 
@@ -214,18 +238,12 @@ export class DialogFuncionarioComponent implements OnInit {
   onCheckboxChange(index: number): void {
     const role = this.roles.at(index);
     const isActive = role.get('activo')?.value;
-    const acceso = role.get('acceso')?.value;
-    if (acceso >= 4) {
-      if (isActive) {
-        role.get('nivel')?.enable();
-      } else {
-        role.get('nivel')?.disable();
-        role.get('nivel')?.setValue('');
-      }
+
+    if (isActive) {
+      role.get('nivel')?.enable();
     } else {
-      // Para MiAdminsitrador nivel es fijo, no se habilita ni deshabilita
-      // Para MiOrganigrama nivel es fijo, no se habilita ni deshabilita
-      // Para MiPostulante nivel es fijo, no se habilita ni deshabilita
+      role.get('nivel')?.disable();
+      role.get('nivel')?.setValue('');
     }
   }
 
