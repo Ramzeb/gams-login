@@ -40,6 +40,8 @@ import { DialogFuncionarioComponent } from './components/pages/funcionarios/dial
 import { ContenidosComponent } from './components/pages/contenidos/contenidos.component';
 import { DialogContenidoComponent } from './components/pages/contenidos/dialog-contenido/dialog-contenido.component';
 
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
+
 // Define los formatos de fecha
 export const MY_DATE_FORMATS = {
   parse: {
@@ -59,6 +61,7 @@ export const MY_DATE_FORMATS = {
     LoginComponent,
     HomeComponent,
     FuncionariosComponent,
+    ConfirmDialogComponent,
     MessageDialogComponent,
     DialogFuncionarioComponent,
     ContenidosComponent,

@@ -17,6 +17,18 @@ export class ContenidosComponent implements OnInit {
   formularios: { [id: string]: FormGroup } = {};
   permissions: string[] = [];
 
+  backgrounds: string[] = [
+    'linear-gradient(135deg, #81fbb87a 10%, #28c76f8c 100%)',
+    'linear-gradient(135deg, #abdcff93 10%, #0396ffd7 100%)',
+    'linear-gradient(135deg, #f97793bd 10%, #623aa28e 100%)',
+    'linear-gradient(135deg, #fcd03198 10%, #f555558c 100%)',
+    'linear-gradient(135deg, #f761a291 10%, #8c1bab 100%)',
+    'linear-gradient(135deg, #92ffbfa4 10%, #0027617c 100%)',
+    'linear-gradient(135deg, #52e5e7b4 10%, #120cb775 100%)',
+    'linear-gradient(135deg, #fdd7199d 10%, #e8050591 100%)',
+    'linear-gradient(135deg, #3b26677e 10%, #bc78ec81 100%)',
+  ];
+
   constructor(
     private authService: AuthService,
     private contenidosService: ContenidosService,

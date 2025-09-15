@@ -12,13 +12,14 @@
 
     <div>
         <div class="cards">
-            <mat-card *ngFor="let contenido of contenidos" class="contenido-card" appearance="outlined">
+            <mat-card *ngFor="let contenido of contenidos; let i = index" class="contenido-card"
+                [ngStyle]="{ 'background-image': backgrounds[i % backgrounds.length] }" appearance="outlined">
                 <ng-container *ngIf="editandoId !== contenido._id">
                     <div [ngClass]="{ 'inactivo': !contenido.estado }">
                         <h4>{{ contenido.titulo | uppercase}}</h4>
                         <h6>{{ capitalizePrimeraLetra(contenido.encabezado || "") }}</h6>
                         <p>{{ capitalizePrimeraLetra(contenido.descripcion || "")}}</p>
-                        <p><strong>Denominación:</strong> {{ contenido.denominacion }} <strong>Categoría:</strong> {{
+                        <p>Denominación: {{ contenido.denominacion }} Categoría: {{
                             contenido.categoria }}</p>
                     </div>
                     <hr style="margin: 16px 0;" />
@@ -105,9 +106,9 @@
                             </mat-error>
                         </mat-form-field>
                         <div mat-dialog-actions align="end">
-                            <button mat-raised-button color="primary" (click)="guardar(contenido._id)"
-                                style="margin-right: 5px;">Guardar</button>
-                            <button mat-flat-button color="warn" (click)="cancelar()">Cancelar</button>
+                            <button mat-flat-button color="warn" (click)="cancelar()"
+                                style="margin-right: 5px;">Cancelar</button>
+                            <button mat-raised-button color="primary" (click)="guardar(contenido._id)">Guardar</button>
                         </div>
                     </form>
                 </ng-container>

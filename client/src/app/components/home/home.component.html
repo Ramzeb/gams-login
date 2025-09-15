@@ -1,97 +1,79 @@
-<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
+<div class="app-container" [class.mobile]="mobileQuery.matches">
 
-    <mat-toolbar color="" class="example-toolbar">
+    <mat-sidenav-container class="sidenav-container">
 
-        <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-        <div class="title-navbar">
-            <div>
-                <h1 class="animated-text">
-                    <span class="animated-g">Mi</span>Administrador
-                </h1>
+        <!-- Barra lateral izquierda -->
+        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [opened]="!mobileQuery.matches"
+            fixedInViewport>
+
+            <!-- Logo arriba -->
+            <div class="sidenav-logo">
+                <img src="assets/img/logo.png" alt="Logo" />
             </div>
-
-            <div class="account">
-                <!-- Ícono para activar el menú desplegable -->
-                <mat-icon class="my-icon" (click)="toggleDropdown()">account_circle</mat-icon>
-
-                <h1 class="example-app-name" style="font-size: 14px;">{{ name() }}</h1>
-
-                <!-- Menú desplegable -->
-                <div class="dropdown-menu" *ngIf="showDropdown"
-                    style="position: absolute; top: 50px; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); z-index: 1000; padding: 10px;">
-                    <button mat-button (click)="logout()" style="width: 100%; text-align: left;">
-                        <div class="icon-menu">
-                            <mat-icon>exit_to_app</mat-icon>
-                            <span>Cerrar sesión</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </mat-toolbar>
-
-    <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
-            fixedTopGap="56" [opened]="mobileQuery.matches ===false">
 
             <mat-nav-list *ngIf="accessibleModules$ | async as modules">
 
-                <a mat-list-item [class.active-link]="getActiveLink() === 'funcionarios'"
-                    (click)="setActiveLink('funcionarios')" routerLink="funcionarios"
-                    *ngIf="modules?.hasOwnProperty('funcionarios')">
-                    <div class="icon">
-                        <mat-icon>people_outline</mat-icon><span>Funcionarios</span>
+                <a mat-list-item routerLink="funcionarios" [class.active]="getActiveLink() === 'funcionarios'"
+                    class="list">
+                    <div class="menu-item">
+                        <mat-icon>people_outline</mat-icon>
+                        <span>Funcionarios</span>
                     </div>
                 </a>
 
-                <mat-expansion-panel hideToggle style="width: 100%; padding: 0; margin: 0;">
-                    <mat-expansion-panel-header mat-list-item [class.active-link]="getActiveLink() === 'settings'"
-                        (click)="setActiveLink('settings')" routerLink="settings"
-                        *ngIf="modules?.hasOwnProperty('contenidos')" style="padding: 0; padding-left: 15px;">
-                        <mat-panel-title style="width: 100%;">
-                            <div class="icon">
+                <mat-expansion-panel hideToggle>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <div class="menu-item">
                                 <mat-icon>tune</mat-icon>
                                 <span>Preferencias</span>
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
 
-                    <mat-nav-list style="width: 150%; margin: -8px 0px -20px -12px;">
-                        <a mat-list-item [class.active-link]="getActiveLink() === 'contenidos'"
-                            (click)="setActiveLink('contenidos')" routerLink="contenidos"
-                            *ngIf="modules?.hasOwnProperty('contenidos')">
-                            <div class="icon">
-                                <mat-icon>assignment_late</mat-icon><span>Solicitudes</span>
+                    <mat-nav-list>
+                        <a mat-list-item routerLink="contenidos" [class.active]="getActiveLink() === 'contenidos'">
+                            <div class="menu-item">
+                                <mat-icon>assignment_late</mat-icon>
+                                <span>Solicitudes</span>
                             </div>
                         </a>
-                        <!-- <a mat-list-item [class.active-link]="getActiveLink() === 'person'"
-                            (click)="setActiveLink('person')" routerLink="person">
-                            <div class="icon">
-                                <mat-icon>person</mat-icon>
-                                <span>Perfil</span>
-                            </div>
-                        </a>
-                        <a mat-list-item [class.active-link]="getActiveLink() === 'preferencias'"
-                            (click)="setActiveLink('preferencias')" routerLink="preferencias">
-                            <div class="icon">
-                                <mat-icon>tune</mat-icon>
-                                <span>Preferencias</span>
-                            </div>
-                        </a>
-                        <a mat-list-item [class.active-link]="getActiveLink() === 'ayuda'"
-                            (click)="setActiveLink('ayuda')" routerLink="ayuda">
-                            <div class="icon">
-                                <mat-icon>help</mat-icon>
-                                <span>Ayuda</span>
-                            </div>
-                        </a> -->
                     </mat-nav-list>
                 </mat-expansion-panel>
-            </mat-nav-list>
 
+            </mat-nav-list>
         </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet></router-outlet>
+
+        <!-- Contenido principal -->
+        <mat-sidenav-content class="content">
+
+            <!-- Barra superior -->
+            <mat-toolbar class="top-toolbar">
+                <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+                <div class="toolbar-title">
+                    <h1 class="app-name">
+                        <span class="app-highlight">Mi</span>Admi<span class="animated">N</span>istrador
+                    </h1>
+
+                    <div class="user-account">
+                        <mat-icon class="account-icon" (click)="toggleDropdown()">account_circle</mat-icon>
+                        <h1 class="user-name">{{ name() }}</h1>
+
+                        <div class="dropdown" *ngIf="showDropdown">
+                            <button mat-button (click)="logout()" class="dropdown-button">
+                                <mat-icon>exit_to_app</mat-icon>
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </mat-toolbar>
+
+            <!-- Contenido principal del router -->
+            <div class="main-content">
+                <router-outlet></router-outlet>
+            </div>
+
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>

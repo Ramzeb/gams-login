@@ -1,55 +1,58 @@
-<h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
-<p class="subtitle text-wrap">{{ data.cargo || "SIN REGISTRO" }}</p>
+<div class="funcionario-form">
+    <h2 mat-dialog-title class="title">{{ data.nombre || "SIN REGISTRO" }}</h2>
+    <p class="subtitle text-wrap">{{ data.cargo || "SIN REGISTRO" }}</p>
 
-<mat-dialog-content [formGroup]="roleForm">
-    <div formArrayName="roles">
-        <mat-accordion multi>
-            <mat-expansion-panel *ngFor="let sistema of roles.controls; let i = index" [formGroupName]="i">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <mat-checkbox formControlName="activo" (change)="onCheckboxChange(i)">
-                            {{ sistemas[i].nombre }}
-                        </mat-checkbox>
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <!-- Nivel seleccionable para los sistemas modulares -->
-                <mat-form-field *ngIf="sistemas[i].acceso" appearance="outline" class="select-field">
-                    <mat-label>Seleccionar Nivel</mat-label>
-                    <mat-select formControlName="nivel" [disabled]="!roles.controls[i].get('activo')?.value">
-                        <mat-option *ngFor="let nivel of  sistemas[i].level" [value]="nivel">
-                            {{ nivel }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-
-                <!-- Permisos especiales según el sistema -->
-                <div *ngIf="roles.controls[i].get('activo')?.value && funcionalidadesMap[sistemas[i].acceso]"
-                    class="modules-box">
-                    <h4>{{ sistemas[i].nombre }}</h4>
-                    <div *ngFor="let modulo of Object.keys(funcionalidadesMap[sistemas[i].acceso])">
-                        <div [formGroupName]="'usuarios'">
-                            <strong>{{ modulo | titlecase }}</strong>
-                            <mat-checkbox [formControlName]="modulo"
-                                (change)="onUsuarioToggle(i, modulo, $event.checked)">
+    <mat-dialog-content [formGroup]="roleForm">
+        <div formArrayName="roles" style="margin-bottom: 5px;">
+            <mat-accordion multi>
+                <mat-expansion-panel *ngFor="let sistema of roles.controls; let i = index" [formGroupName]="i"
+                    style="border: 2px solid rgb(44, 253, 243)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <mat-checkbox formControlName="activo" (change)="onCheckboxChange(i)">
+                                {{ sistemas[i].nombre }}
                             </mat-checkbox>
-                        </div>
-                        <div class="module-options">
-                            <mat-checkbox *ngFor="let permiso of funcionalidadesMap[sistemas[i].acceso][modulo]"
-                                [checked]="isChecked(i, modulo, permiso)"
-                                (change)="onPermissionChange(i, modulo, permiso, $event.checked)">
-                                {{ permiso }}
-                            </mat-checkbox>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <!-- Nivel seleccionable para los sistemas modulares -->
+                    <mat-form-field *ngIf="sistemas[i].acceso" appearance="outline" class="select-field">
+                        <mat-label>Seleccionar Nivel</mat-label>
+                        <mat-select formControlName="nivel" [disabled]="!roles.controls[i].get('activo')?.value">
+                            <mat-option *ngFor="let nivel of  sistemas[i].level" [value]="nivel">
+                                {{ nivel }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Permisos especiales según el sistema -->
+                    <div *ngIf="roles.controls[i].get('activo')?.value && funcionalidadesMap[sistemas[i].acceso]"
+                        class="modules-box">
+                        <h4 style="text-align: center;">{{ sistemas[i].nombre }}</h4>
+                        <div *ngFor="let modulo of Object.keys(funcionalidadesMap[sistemas[i].acceso])">
+                            <div [formGroupName]="'usuarios'">
+                                <span>{{ modulo | titlecase }}</span>
+                                <mat-checkbox [formControlName]="modulo"
+                                    (change)="onUsuarioToggle(i, modulo, $event.checked)">
+                                </mat-checkbox>
+                            </div>
+                            <div class="module-options">
+                                <mat-checkbox *ngFor="let permiso of funcionalidadesMap[sistemas[i].acceso][modulo]"
+                                    [checked]="isChecked(i, modulo, permiso)"
+                                    (change)="onPermissionChange(i, modulo, permiso, $event.checked)">
+                                    {{ permiso }}
+                                </mat-checkbox>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </mat-expansion-panel>
-        </mat-accordion>
-    </div>
-</mat-dialog-content>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-    <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
-    <button mat-raised-button color="primary" [disabled]="roleForm.invalid || roleForm.pristine"
-        (click)="guardar()">Guardar</button>
-</mat-dialog-actions>
+    <mat-dialog-actions align="end">
+        <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
+        <button mat-raised-button color="primary" [disabled]="roleForm.invalid || roleForm.pristine"
+            (click)="guardar()">Guardar</button>
+    </mat-dialog-actions>
+</div>

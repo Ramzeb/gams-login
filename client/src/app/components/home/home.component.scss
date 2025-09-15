@@ -1,19 +1,5 @@
-.animated-text {
-  /* font-family: "Agdasima", sans-serif;*/
-  font-weight: 400;
-  font-size: 20px;
-  text-align: center;
-  margin-top: 12%;
-  display: inline-block;
-  letter-spacing: 1px;
-}
-
-// .animated-g {
-//   display: inline-block;
-//   animation: jump 15s infinite;
-//   color: rgb(44, 253, 243);
-// }
-.example-container {
+/* Contenedor principal */
+.app-container {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -21,64 +7,68 @@
   bottom: 0;
   left: 0;
   right: 0;
+
+  &.mobile .top-toolbar {
+    position: fixed;
+    z-index: 2;
+  }
 }
 
-.example-is-mobile .example-toolbar {
-  position: fixed;
-  z-index: 2;
-}
-
-h1.example-app-name {
-  display: flex;
-  margin: 16px 0 16px 8px;
-  margin-left: 8px;
-  font-size: 20px;
-}
-
-.example-sidenav-container {
+/* Sidenav */
+.sidenav-container {
   flex: 1;
-  //   background-color: #041629;
-  background-color: #f0f0f0;
+  height: 100vh;
+  background-color: #041629;
+
+  mat-sidenav {
+    width: 200px;
+    border-right: 3px solid rgb(6, 212, 202);
+    padding: 0 3px;
+    background-color: black;
+    background-image: linear-gradient(
+      to right,
+      rgba(0, 204, 255, 0.356) 0%,
+      /*#242424 90%*/ #001d3da4 90%
+    );
+  }
+
+  mat-nav-list a {
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+  }
+  /*cambiar color hover menu*/
+  mat-nav-list a:hover * {
+    transition: 1.5ms;
+    font-size: 15px;
+    color: rgb(44, 253, 243);
+  }
+
+  .list:hover {
+    background-color: #d6e4fc28;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
 }
 
-.example-is-mobile .example-sidenav-container {
-  flex: 1 0 auto;
+/* Barra superior */
+.content {
+  padding: 0 5px;
 }
 
-mat-sidenav {
-  width: 190px;
-}
-
-.icon {
-  display: flex;
-  align-items: left;
-  font-weight: 450;
-}
-
-.icon span {
-  margin-left: 8px;
-}
-
-/*cambiar color hover menu*/
-a:hover * {
-  transition: 1.5ms;
-  //color: rgb(44, 253, 243);
-  color: rgb(1, 134, 149);
-}
-
-/*cambiar color fondo menu*/
-mat-sidenav {
-  //   background-image: linear-gradient(
-  //     to right,
-  //     rgba(0, 204, 255, 0.356) 0%,
-  //     /*#242424 90%*/ #001d3da4 90%
-  //   );
-  //   background-color: black;
-  border-right: 3px solid rgb(6, 212, 202);
-  padding: 0 3px 0 3px;
-}
-
-.example-toolbar {
+.top-toolbar {
+  margin-right: 15px;
+  margin-left: 0;
+  width: 99%;
+  border-radius: 10px;
+  background-color: #000000;
   background-image: radial-gradient(
     circle farthest-corner at 50.4% 50.5%,
     rgba(44, 253, 243, 0.445) 0%,
@@ -86,66 +76,109 @@ mat-sidenav {
   );
 }
 
-.title-navbar {
-  width: 100%;
+/* Título y cuenta de usuario */
+.toolbar-title {
   display: flex;
-  align-items: left;
   justify-content: space-between;
-}
-
-.account {
-  display: flex;
-  flex-direction: row;
   align-items: center;
+  width: 100%;
+
+  .app-name {
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+    display: inline-block;
+    letter-spacing: 1px;
+
+    .app-highlight {
+      color: rgb(44, 253, 243);
+    }
+    .animated {
+      display: inline-block;
+      animation: jump 10s infinite;
+      color: rgb(44, 253, 243);
+    }
+  }
+
+  .user-account {
+    display: flex;
+    align-items: center;
+
+    .account-icon {
+      font-size: 38px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      transition: color 0.2s ease,
+        transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), filter 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        color: #d6e4fc;
+        transform: scale(1.05);
+        filter: drop-shadow(0 4px 6px rgba(41, 121, 255, 0.6));
+        box-shadow: 0 4px 15px rgba(41, 121, 255, 0.4);
+      }
+    }
+
+    .user-name {
+      font-size: 14px;
+      margin-left: 8px;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: #333;
+      border: 1px solid rgb(44, 253, 243);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.2s ease-in-out;
+      z-index: 1000;
+      margin-right: 15px;
+
+      .dropdown-button {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
 }
 
-/* Clase para la opción activa del menú */
-.active-link {
-  background-color: rgba(3, 129, 122, 0.2);
-  color: rgb(44, 253, 243);
-  font-weight: bold;
-  border-left: 4px solid rgb(44, 253, 243);
+/* Contenido principal del router */
+.main-content {
+  flex: 1;
+  overflow: auto;
 }
 
-/* Efecto de transición al cambiar de opción */
-a.mat-list-item {
-  transition: all 0.3s ease;
-}
-
-.my-icon {
-  font-size: 38px;
-  width: 38px;
-  height: 38px;
-  cursor: pointer;
-  transition: color 0.3s ease,
-    transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), filter 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.my-icon:hover {
-  color: #d6e4fc; /* azul vivo */
-  transform: scale(1.15) rotate(0deg);
-  filter: drop-shadow(0 4px 6px rgba(41, 121, 255, 0.6));
-  box-shadow: 0 4px 15px rgba(41, 121, 255, 0.4);
-}
-
-.dropdown-menu {
+/* Logo en la barra lateral */
+.sidenav-logo {
+  width: 100%;
+  padding: 10px;
   display: flex;
   justify-content: center;
-  flex-direction: column;
-  margin-top: 12px;
-  animation: fadeIn 0.2s ease-in-out;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.945);
+  border-top-right-radius: 15px;
+
+  img {
+    max-width: 100%; /* Ajusta según el tamaño del logo */
+    height: auto;
+  }
 }
 
-.icon-menu {
-  display: flex;
-  align-items: left;
-}
-
-.icon-menu span {
-  margin-left: 8px;
-}
-
+/* Animaciones */
 @keyframes fadeIn {
   from {
     opacity: 0;
