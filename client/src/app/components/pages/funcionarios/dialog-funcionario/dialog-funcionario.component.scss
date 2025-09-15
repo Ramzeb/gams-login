@@ -1,3 +1,7 @@
+.funcionario-form {
+  background-color: #333;
+}
+
 .title {
   text-align: center;
   margin: 0;
@@ -15,14 +19,14 @@
 .select-field {
   width: 100%;
   max-width: 250px;
+  margin-top: 5px;
   flex: 1;
 }
 
 .modules-box {
-  margin-top: 1rem;
   padding: 1rem;
-  background: #f4f4f4;
   border-radius: 8px;
+  border: 2px solid rgb(255, 255, 255);
 }
 
 .module-options {
@@ -57,4 +61,12 @@
 .mat-option {
   padding: 8px;
   font-size: 14px;
+}
+
+.mat-mdc-dialog-content {
+  background-color: #333 !important;
+}
+
+.mat-expansion-panel-body {
+  background: white !important;
 }
