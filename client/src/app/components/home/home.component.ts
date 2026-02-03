@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private authService: AuthService,
     changeDetectorRef: ChangeDetectorRef,
-    media: MediaMatcher
+    media: MediaMatcher,
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 170px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -31,9 +31,9 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.accessibleModules$ = this.authService.getAccessibleModules();
     // Para ver el valor REAL emitido
-    // this.accessibleModules$.subscribe((mods) => {
-    //   console.log("✅ Módulos accesibles:", mods);
-    // });
+    this.accessibleModules$.subscribe((mods) => {
+      console.log('Módulos accesibles:', mods);
+    });
   }
 
   ngOnDestroy(): void {

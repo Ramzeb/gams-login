@@ -35,7 +35,7 @@ export class DialogFuncionarioComponent implements OnInit {
     dependencias: ['editar', 'agregar', 'inactivar'],
     seguros: ['editar', 'descargar'],
     registros: ['editar', 'descargar'],
-    solicitudes: ['aprobar', 'descargar'],
+    solicitudes: ['agregar', 'aprobar', 'descargar'],
     documentos: ['editar', 'descargar'],
     organigrama: ['editar', 'detalle'],
   };
@@ -104,7 +104,7 @@ export class DialogFuncionarioComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<DialogFuncionarioComponent>
+    public dialogRef: MatDialogRef<DialogFuncionarioComponent>,
   ) {
     this.roleForm = this.fb.group({ roles: this.fb.array([]) });
   }
@@ -126,7 +126,7 @@ export class DialogFuncionarioComponent implements OnInit {
     };
     this.sistemas.forEach((sistema) => {
       const existing = this.data.role?.find(
-        (r: any) => r.acceso === sistema.acceso
+        (r: any) => r.acceso === sistema.acceso,
       );
 
       let modules = this.fb.group({});
@@ -136,14 +136,14 @@ export class DialogFuncionarioComponent implements OnInit {
         modules = this.fb.group(
           this.buildModules(
             funcionalidadesMap[sistema.acceso],
-            existing?.modules || {}
-          )
+            existing?.modules || {},
+          ),
         );
         usuarios = this.fb.group(
           this.buildUsuarios(
             funcionalidadesMap[sistema.acceso],
-            existing?.modules || {}
-          )
+            existing?.modules || {},
+          ),
         );
       }
 
@@ -154,7 +154,7 @@ export class DialogFuncionarioComponent implements OnInit {
           nivel: [existing?.nivel || (sistema.acceso >= 4 ? 'user' : '')],
           modules,
           usuarios,
-        })
+        }),
       );
     });
   }
@@ -165,7 +165,7 @@ export class DialogFuncionarioComponent implements OnInit {
       const modPerms: any = {};
       funcionalidades[mod].forEach((func: any) => {
         modPerms[func] = this.fb.control(
-          !!existingModules?.[mod]?.includes(func)
+          !!existingModules?.[mod]?.includes(func),
         );
       });
       group[mod] = this.fb.group(modPerms);
@@ -178,7 +178,7 @@ export class DialogFuncionarioComponent implements OnInit {
     for (const mod in funcionalidades) {
       const tieneAcceso = Object.prototype.hasOwnProperty.call(
         existingModules,
-        mod
+        mod,
       );
       group[mod] = new FormControl(tieneAcceso);
     }
@@ -205,7 +205,7 @@ export class DialogFuncionarioComponent implements OnInit {
 
           for (const m in modules) {
             const funcionesActivas = Object.keys(modules[m]).filter(
-              (f) => modules[m][f]
+              (f) => modules[m][f],
             );
             if (funcionesActivas.length > 0) {
               filtered[m] = funcionesActivas;
@@ -230,7 +230,7 @@ export class DialogFuncionarioComponent implements OnInit {
 
     this.authService.updateRole(payload).subscribe(
       (res) => this.dialogRef.close(res),
-      (err) => console.error('Error al guardar roles', err)
+      (err) => console.error('Error al guardar roles', err),
     );
   }
 
@@ -273,7 +273,7 @@ export class DialogFuncionarioComponent implements OnInit {
     index: number,
     modulo: string,
     permiso: string,
-    checked: boolean
+    checked: boolean,
   ): void {
     const modules = this.roles
       .at(index)
