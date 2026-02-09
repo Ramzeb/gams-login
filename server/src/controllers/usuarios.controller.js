@@ -1,7 +1,9 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const User = require("../models/funcionarios.model");
+const Registro = require("../models/registros.model");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -26,7 +28,12 @@ async function createElemento(req, res) {
 
     const user = await User.findOne(query);
     //console.log(user);
-
+    const objectId = new mongoose.Types.ObjectId(user._id);
+    const register = await Registro.findOne({
+      id_funcionario: objectId,
+      estado: true,
+    }).lean();
+    //console.log(register);
     // Llamada al servicio de autenticación externo
     const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -38,12 +45,13 @@ async function createElemento(req, res) {
             role: "user",
             modules: [],
           },
-          secretKey
+          secretKey,
         );
         return res.status(200).json({
           success: true,
           token,
           funcionario: user._id,
+          registro: register._id,
           role: "user",
           modules: [],
           name: user.nombre,
@@ -69,7 +77,7 @@ async function createElemento(req, res) {
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
           modules: user.modules || [],
         },
-        secretKey
+        secretKey,
         //{ expiresIn: "1h" } // El token expirará en 1 hora
       );
 
@@ -80,6 +88,7 @@ async function createElemento(req, res) {
           success: true,
           token,
           funcionario: user._id,
+          registro: register._id,
           role: user.role[user.role.findIndex((r) => r.acceso === role)].nivel,
           modules: module instanceof Map ? Object.fromEntries(module) : module,
           name: user.nombre,
@@ -113,7 +122,7 @@ async function updateElemento(req, res) {
       // Llamada al servicio de autenticación externo
       const passwordMatch = await bcrypt.compare(
         currentPassword,
-        user.password
+        user.password,
       );
       if (!passwordMatch) {
         return res
