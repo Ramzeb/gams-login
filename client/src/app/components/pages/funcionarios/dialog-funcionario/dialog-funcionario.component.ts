@@ -35,6 +35,7 @@ export class DialogFuncionarioComponent implements OnInit {
     dependencias: ['editar', 'agregar', 'inactivar'],
     seguros: ['editar', 'descargar'],
     registros: ['editar', 'descargar'],
+    rotaciones: ['editar', 'descargar'],
     solicitudes: ['agregar', 'aprobar', 'descargar'],
     documentos: ['editar', 'descargar'],
     organigrama: ['editar', 'detalle'],
